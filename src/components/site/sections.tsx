@@ -153,9 +153,12 @@ export function Branches() {
                 {b.phones && b.phones.length > 0 ? (
                   <dd className="am-phones">
                     {b.phones.map((phone) => (
-                      <a key={phone} href={telHref(phone)} className="am-branch-link" dir="ltr">
-                        {phone}
-                      </a>
+                      <span key={phone.number} className="am-phone">
+                        <span className="am-phone-name">{phone.name}</span>
+                        <a href={telHref(phone.number)} className="am-branch-link" dir="ltr" aria-label={`اتصل بـ${phone.name}: ${phone.number}`}>
+                          {phone.number}
+                        </a>
+                      </span>
                     ))}
                   </dd>
                 ) : (

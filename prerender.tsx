@@ -23,7 +23,7 @@ const jsonLd = JSON.stringify({
     "@type": "HomeGoodsStore",
     name: `${company.nameAr}، ${b.name}`,
     address: { "@type": "PostalAddress", streetAddress: b.address, addressLocality: "تاجوراء", addressCountry: "LY" },
-    ...(b.phones?.length ? { telephone: b.phones.map((p) => p.replace(/^0/, "+218")) } : {}),
+    ...(b.phones?.length ? { telephone: b.phones.map((p) => p.number.replace(/^0/, "+218")) } : {}),
   })),
 });
 

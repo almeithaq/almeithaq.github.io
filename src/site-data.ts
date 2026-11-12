@@ -120,7 +120,8 @@ export const offers: Offer[] = [];
 
 // الفروع: استبدل الحقول الفارغة بالبيانات الحقيقية (العنوان، الهاتف، ساعات العمل، رابط الخريطة).
 // الأرقام تُكتب كما تُطلب محلياً (10 أرقام تبدأ بـ 09).
-export type Branch = { name: string; address?: string; phones?: string[]; hours?: string; mapUrl?: string };
+export type Phone = { name: string; number: string };
+export type Branch = { name: string; address?: string; phones?: Phone[]; hours?: string; mapUrl?: string };
 // يحول الرقم المحلي إلى صيغة دولية لروابط الاتصال: 0924035518 تصبح +218924035518
 export const telHref = (phone: string) => `tel:+218${phone.replace(/\D/g, "").replace(/^0/, "")}`;
 
@@ -130,13 +131,20 @@ export const branches: Branch[] = [
     name: "الفرع الرئيسي",
     address: "تاجوراء، سبان، بجانب السوق الشعبي",
     hours: workHours,
-    phones: ["0924035518", "0912910643", "0928106906"],
+    phones: [
+      { name: "سلمان", number: "0924035518" },
+      { name: "أحمد", number: "0912910643" },
+      { name: "عبدالعزيز", number: "0928106906" },
+    ],
   },
   {
     name: "الفرع الثاني",
     address: "تاجوراء، بئر الأسطى ميلاد، قبل أربع شوارع الكهرباء",
     hours: workHours,
-    phones: ["0947999993", "0923898407"],
+    phones: [
+      { name: "عبدالله", number: "0923898407" },
+      { name: "رحيم", number: "0947999993" },
+    ],
   },
 ];
 

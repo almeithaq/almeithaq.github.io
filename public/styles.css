@@ -223,3 +223,6 @@ html, body { background: #102B52; color: #fff; color-scheme: dark; }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 .am-phones { display: flex; flex-wrap: wrap; gap: .35rem 1.3rem; }
 .am-phones .am-branch-link { font-size: 1.08rem; letter-spacing: .02em; }
+.am-phones { gap: .9rem 1.8rem; margin-top: .2rem; }
+.am-phone { display: grid; gap: .1rem; justify-items: start; }
+.am-phone-name { font-weight: 600; font-size: .98rem; color: #fff; }
