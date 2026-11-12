@@ -4,6 +4,7 @@ export const company = {
   nameAr: "شركة الميثاق",
   nameEn: "Almeithaq Company",
   tagline: "سيراميك وبورسلين ومواد صحية",
+  city: "تاجوراء",
 };
 
 export type SocialLink = { platform: string; handle: string; url: string };
@@ -17,120 +18,102 @@ export const socials: SocialLink[] = [
 
 export const facebookUrl = socials[0].url;
 
-// ---------- الأصناف حسب بلد الصناعة ----------
+// ---------- الأصناف ----------
 export type OriginId = "libya" | "india" | "turkey";
-export type Look = "gloss" | "matte" | "kotto" | "pool" | "marble" | "blue";
+export const originNames: Record<OriginId, string> = {
+  libya: "صناعة ليبية",
+  india: "صناعة هندية",
+  turkey: "صناعة تركية",
+};
+
+export type Kind = "سيراميك" | "بورسلين" | "كوطو" | "سيراميك حائطي" | "سيراميك أحواض سباحة" | "رخام";
+export const kinds: Kind[] = ["بورسلين", "سيراميك", "كوطو", "سيراميك حائطي", "رخام", "سيراميك أحواض سباحة"];
+
+export type Finish = "مطفي" | "نص لمعة" | "لمعة" | "دبل لمعة";
+export const finishOrder: Finish[] = ["مطفي", "نص لمعة", "لمعة", "دبل لمعة"];
+
+// شكل البلاطة في البطاقة (توضيحي فقط، والألوان والنقشات حسب المتوفر في الفرع)
+export type Look = "ivory" | "marble" | "kotto" | "pool" | "stone";
+
 export type Product = {
-  kind: string; // نوع الصنف
-  size: string; // المقاس كما يظهر للزائر
-  w: number; // عرض البلاطة المرسومة بالسنتيمتر
-  h: number; // ارتفاع البلاطة المرسومة بالسنتيمتر
+  id: string;
+  kind: Kind;
+  origin: OriginId;
+  size: string; // كما يظهر للزائر
+  w: number; // العرض بالسنتيمتر
+  h: number; // الطول بالسنتيمتر
   look: Look;
-  finishes?: string[];
+  finishes?: Finish[];
   note?: string;
-  decor?: boolean; // يرسم بلاطة ديكور بجانب البلاطة السادة
-};
-export type Origin = { id: OriginId; title: string; products: Product[] };
-
-export const origins: Origin[] = [
-  {
-    id: "libya",
-    title: "صناعة ليبية",
-    products: [
-      { kind: "سيراميك", size: "60×60 سم", w: 60, h: 60, look: "matte" },
-      { kind: "بورسلين", size: "120×60 سم", w: 120, h: 60, look: "gloss" },
-      { kind: "سيراميك حائطي", size: "30×60 سم", w: 30, h: 60, look: "matte", decor: true, note: "مع ديكور 30×60" },
-      { kind: "كوطو", size: "60×60 سم", w: 60, h: 60, look: "kotto", note: "سمك 14 ملم" },
-      { kind: "كوطو", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
-      { kind: "بورسلين", size: "80×80 سم", w: 80, h: 80, look: "gloss" },
-      { kind: "سيراميك حائطي", size: "40×80 سم", w: 40, h: 80, look: "matte", decor: true, note: "مع ديكور 40×80" },
-    ],
-  },
-  {
-    id: "india",
-    title: "صناعة هندية",
-    products: [
-      { kind: "بورسلين", size: "120×60 سم", w: 120, h: 60, look: "gloss", finishes: ["لمعة", "مطفي", "نص لمعة", "دبل لمعة"] },
-      { kind: "بورسلين", size: "80×80 سم", w: 80, h: 80, look: "gloss", finishes: ["لمعة", "مطفي", "نص لمعة"] },
-      { kind: "بورسلين", size: "60×60 سم", w: 60, h: 60, look: "gloss" },
-      { kind: "سيراميك أحواض سباحة", size: "30×60 سم", w: 30, h: 60, look: "pool" },
-      { kind: "بورسلين", size: "1×1 متر", w: 100, h: 100, look: "gloss" },
-      { kind: "بورسلين", size: "120×80 سم", w: 120, h: 80, look: "gloss" },
-      { kind: "كوطو", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
-    ],
-  },
-  {
-    id: "turkey",
-    title: "صناعة تركية",
-    products: [
-      { kind: "بورسلين", size: "120×60 سم", w: 120, h: 60, look: "blue", finishes: ["لمعة"] },
-      { kind: "رخام تركي", size: "30×60 سم", w: 30, h: 60, look: "marble" },
-    ],
-  },
-];
-
-// ---------- فصول الرحلة المتحركة ----------
-export type Chapter = {
-  id: OriginId;
-  rail: string;
-  title: string;
-  text: string;
-  chips: string[];
-  link: string;
+  decor?: boolean; // يُرسم معه بلاط ديكور
 };
 
-export const chapters: Chapter[] = [
+export const products: Product[] = [
+  { id: "ly-ceramic-60", kind: "سيراميك", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "ivory" },
+  { id: "ly-porcelain-120x60", kind: "بورسلين", origin: "libya", size: "120×60 سم", w: 120, h: 60, look: "marble" },
+  { id: "ly-wall-30x60", kind: "سيراميك حائطي", origin: "libya", size: "30×60 سم", w: 30, h: 60, look: "ivory", decor: true, note: "مع ديكور 30×60" },
+  { id: "ly-kotto-60", kind: "كوطو", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "kotto", note: "سمك 14 ملم" },
+  { id: "ly-kotto-50", kind: "كوطو", origin: "libya", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
+  { id: "ly-porcelain-80", kind: "بورسلين", origin: "libya", size: "80×80 سم", w: 80, h: 80, look: "marble" },
+  { id: "ly-wall-40x80", kind: "سيراميك حائطي", origin: "libya", size: "40×80 سم", w: 40, h: 80, look: "ivory", decor: true, note: "مع ديكور 40×80" },
   {
-    id: "libya",
-    rail: "ليبي",
-    title: "صناعة ليبية",
-    text: "سيراميك وبورسلين وكوطو من المصانع الليبية، للأرضيات والجدران.",
-    chips: ["سيراميك 60×60", "بورسلين 120×60", "كوطو سمك 14 ملم"],
-    link: "أصناف الصناعة الليبية",
+    id: "in-porcelain-120x60",
+    kind: "بورسلين",
+    origin: "india",
+    size: "120×60 سم",
+    w: 120,
+    h: 60,
+    look: "marble",
+    finishes: ["لمعة", "مطفي", "نص لمعة", "دبل لمعة"],
   },
-  {
-    id: "india",
-    rail: "هندي",
-    title: "صناعة هندية",
-    text: "بورسلين بأربع لمعات: لمعة، مطفي، نص لمعة، ودبل لمعة.",
-    chips: ["بورسلين 120×60", "1×1 متر", "أحواض سباحة"],
-    link: "أصناف الصناعة الهندية",
-  },
-  {
-    id: "turkey",
-    rail: "تركي",
-    title: "صناعة تركية",
-    text: "بورسلين تركي لمعة ورخام تركي يكملان المشهد.",
-    chips: ["بورسلين 120×60", "رخام 30×60"],
-    link: "أصناف الصناعة التركية",
-  },
+  { id: "in-porcelain-80", kind: "بورسلين", origin: "india", size: "80×80 سم", w: 80, h: 80, look: "marble", finishes: ["لمعة", "مطفي", "نص لمعة"] },
+  { id: "in-porcelain-60", kind: "بورسلين", origin: "india", size: "60×60 سم", w: 60, h: 60, look: "stone" },
+  { id: "in-pool-30x60", kind: "سيراميك أحواض سباحة", origin: "india", size: "30×60 سم", w: 30, h: 60, look: "pool" },
+  { id: "in-porcelain-100", kind: "بورسلين", origin: "india", size: "1×1 متر", w: 100, h: 100, look: "marble" },
+  { id: "in-porcelain-120x80", kind: "بورسلين", origin: "india", size: "120×80 سم", w: 120, h: 80, look: "stone" },
+  { id: "in-kotto-50", kind: "كوطو", origin: "india", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
+  { id: "tr-porcelain-120x60", kind: "بورسلين", origin: "turkey", size: "120×60 سم", w: 120, h: 60, look: "marble", finishes: ["لمعة"] },
+  { id: "tr-marble-30x60", kind: "رخام", origin: "turkey", size: "30×60 سم", w: 30, h: 60, look: "marble" },
 ];
 
-export const finishes = [
-  { id: "matte", name: "مطفي", text: "سطح هادئ بلا انعكاس." },
-  { id: "semi", name: "نص لمعة", text: "لمعان خفيف وناعم." },
-  { id: "gloss", name: "لمعة", text: "سطح مصقول يعكس الضوء." },
-  { id: "double", name: "دبل لمعة", text: "أعلى درجات اللمعان." },
-];
+export const productTitle = (p: Product) => `${p.kind} ${p.size}`;
 
-// العروض والتخفيضات: أضف العروض هنا لتظهر تلقائياً في الموقع.
+// ---------- غرفة العرض التفاعلية (صور توضيحية لنفس الصالة) ----------
+export type FloorLook = { id: string; name: string; detail: string; image: string; swatch: string; kind: Kind };
+export const floorLooks: FloorLook[] = [
+  { id: "ivory", name: "سيراميك مطفي فاتح", detail: "بلاط مربع بلون عاجي هادئ", image: "assets/floor-ivory", swatch: "assets/sw-ivory.jpg", kind: "سيراميك" },
+  { id: "marble", name: "بورسلين رخامي لامع", detail: "سطح مصقول بعروق رمادية ناعمة", image: "assets/floor-marble", swatch: "assets/sw-marble.jpg", kind: "بورسلين" },
+  { id: "grey", name: "بورسلين رمادي مطفي", detail: "مقاسات كبيرة بملمس عصري", image: "assets/floor-grey", swatch: "assets/sw-grey.jpg", kind: "بورسلين" },
+  { id: "blue", name: "بورسلين أزرق لامع", detail: "لمسة جريئة بعروق بيضاء", image: "assets/floor-blue", swatch: "assets/sw-blue.jpg", kind: "بورسلين" },
+];
+export const floorCement = "assets/floor-cement";
+
+export const finishInfo: Record<Finish, string> = {
+  مطفي: "سطح هادئ بلا انعكاس، مريح للعين ومناسب للحركة الكثيفة.",
+  "نص لمعة": "لمعان خفيف وناعم يجمع بين الأناقة والعملية.",
+  لمعة: "سطح مصقول يعكس الضوء ويوسّع المكان بصرياً.",
+  "دبل لمعة": "أعلى درجات اللمعان، انعكاس يشبه المرآة.",
+};
+
+// ---------- العروض والتخفيضات ----------
+// أضف العروض هنا لتظهر تلقائياً في الموقع.
 // مثال: { title: "بورسلين 60×60", detail: "خصم 15%", until: "حتى نهاية الشهر" }
 export type Offer = { title: string; detail: string; until?: string };
 export const offers: Offer[] = [];
 
-// الفروع: استبدل الحقول الفارغة بالبيانات الحقيقية (العنوان، الهاتف، ساعات العمل، رابط الخريطة).
-// الأرقام تُكتب كما تُطلب محلياً (10 أرقام تبدأ بـ 09).
-export type Phone = { name: string; number: string };
-export type Branch = { name: string; address?: string; phones?: Phone[]; hours?: string; mapUrl?: string };
-// يحول الرقم المحلي إلى صيغة دولية لروابط الاتصال: 0924035518 تصبح +218924035518
-export const telHref = (phone: string) => `tel:+218${phone.replace(/\D/g, "").replace(/^0/, "")}`;
+// ---------- الفروع وأرقام التواصل ----------
+// whatsapp: true فقط للأرقام التي أكدت الشركة أن عليها واتساب.
+export type Phone = { name: string; number: string; whatsapp?: boolean };
+export type Branch = { id: string; name: string; address: string; phones: Phone[]; mapUrl?: string };
 
-export const workHours = "يومياً من 10 صباحاً حتى المغرب";
+// ساعات العمل كما أرسلتها الشركة (لم تُذكر أيام الإغلاق).
+export const workHours = "من 10 صباحاً حتى المغرب";
+
 export const branches: Branch[] = [
   {
+    id: "main",
     name: "الفرع الرئيسي",
     address: "تاجوراء، سبان، بجانب السوق الشعبي",
-    hours: workHours,
     phones: [
       { name: "سلمان", number: "0924035518" },
       { name: "أحمد", number: "0912910643" },
@@ -138,9 +121,9 @@ export const branches: Branch[] = [
     ],
   },
   {
+    id: "second",
     name: "الفرع الثاني",
     address: "تاجوراء، بئر الأسطى ميلاد، قبل أربع شوارع الكهرباء",
-    hours: workHours,
     phones: [
       { name: "عبدالله", number: "0923898407" },
       { name: "عبدالرحيم", number: "0947999993" },
@@ -148,10 +131,31 @@ export const branches: Branch[] = [
   },
 ];
 
+// يحول الرقم المحلي إلى صيغة دولية: 0924035518 تصبح 218924035518
+export const intlNumber = (phone: string) => `218${phone.replace(/\D/g, "").replace(/^0/, "")}`;
+export const telHref = (phone: string) => `tel:+${intlNumber(phone)}`;
+export const waHref = (phone: string, text: string) => `https://wa.me/${intlNumber(phone)}?text=${encodeURIComponent(text)}`;
+
+// إحداثيات تاجوراء التقريبية لحساب وقت المغرب اليومي (توقيت ليبيا UTC+2)
+export const tajouraCoords = { lat: 32.882, lng: 13.35, utcOffset: 2 };
+
 export const gallery = [
   { image: "assets/gal-kitchen.jpg", w: 900, h: 1200, caption: "مطبخ بجدار أزرق لامع", alt: "مطبخ أبيض بجدار من البلاط الأزرق" },
   { image: "assets/cat-porcelain.jpg", w: 1400, h: 1050, caption: "ألواح بورسلين بملمس الرخام", alt: "ألواح بورسلين كبيرة بيضاء وزرقاء في صالة عرض" },
   { image: "assets/gal-shower.jpg", w: 900, h: 1200, caption: "حمام بجدران بيضاء وتجويف أزرق", alt: "دش بجدران بيضاء وتجويف من الموزاييك الأزرق" },
   { image: "assets/cat-ceramic.jpg", w: 1400, h: 1050, caption: "سيراميك أبيض مع لمسة زرقاء", alt: "عينات بلاط سيراميك بالأبيض والرمادي والأزرق" },
   { image: "assets/gal-terrace.jpg", w: 900, h: 1200, caption: "مدخل خارجي ببلاط حجري", alt: "مدخل فيلا ببلاط خارجي رمادي وباب أزرق" },
+  { image: "assets/cat-sanitary.jpg", w: 1400, h: 1050, caption: "حمام بطقم صحي أبيض", alt: "حمام حديث بطقم صحي أبيض وجدار أزرق" },
+];
+
+export const marqueeItems = [
+  "سيراميك 60×60",
+  "بورسلين 120×60",
+  "كوطو سمك 14 ملم",
+  "بورسلين 1×1 متر",
+  "سيراميك حائطي مع ديكور",
+  "رخام تركي 30×60",
+  "سيراميك أحواض سباحة",
+  "بورسلين 120×80",
+  "مواد صحية",
 ];
