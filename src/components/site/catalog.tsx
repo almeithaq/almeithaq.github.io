@@ -3,6 +3,7 @@ import { finishOrder, kinds, originNames, products, productTitle, type Finish, t
 import { normalize, prefersReducedMotion } from "./fx";
 import { IconCheck, IconPlus, IconSearch, IconClose, IconRotate } from "./icons";
 import { useRequest } from "./request";
+import type { CalcDetail } from "./calculator";
 
 const useIsoLayoutEffect = typeof window === "undefined" ? useEffect : useLayoutEffect;
 
@@ -20,7 +21,8 @@ const haystack = new Map(
 );
 
 export function openCalculator(p: Product) {
-  window.dispatchEvent(new CustomEvent("am:calc", { detail: { w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin] } }));
+  const detail: CalcDetail = { w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind };
+  window.dispatchEvent(new CustomEvent("am:calc", { detail }));
   document.getElementById("calculator")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }
 

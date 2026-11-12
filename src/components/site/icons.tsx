@@ -103,3 +103,21 @@ export const IconRotate = ({ className }: P) => (
     <path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4.5h-4.5" />
   </svg>
 );
+export const IconFloor = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <path d="M2.5 15.5L12 10l9.5 5.5L12 21z" />
+    <path d="M7.25 12.75l9.5 5.5M16.75 12.75l-9.5 5.5" />
+  </svg>
+);
+export const IconCube = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <path d="M12 3l8.5 4.75v8.5L12 21l-8.5-4.75v-8.5z" />
+    <path d="M3.5 7.75L12 12.5l8.5-4.75M12 12.5V21" />
+  </svg>
+);
+export const IconNet = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <path d="M8.5 3h7v5.5H21v7h-5.5V21h-7v-5.5H3v-7h5.5z" />
+    <path d="M8.5 8.5h7v7h-7z" />
+  </svg>
+);

@@ -32,6 +32,7 @@ export function RequestProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   const [pulse, setPulse] = useState(0);
   const [message, setMessage] = useState("");
+  const [toastOn, setToastOn] = useState(false);
   const loaded = useRef(false);
   const toastTimer = useRef(0);
 
@@ -57,10 +58,15 @@ export function RequestProvider({ children }: { children: ReactNode }) {
     }
   }, [items]);
 
+  // الرسالة تبقى ظاهرة أثناء نزول الإشعار، ثم تُمسح حتى تُقرأ الرسالة التالية ولو تكررت.
   const toast = useCallback((msg: string) => {
     setMessage(msg);
+    setToastOn(true);
     window.clearTimeout(toastTimer.current);
-    toastTimer.current = window.setTimeout(() => setMessage(""), 2600);
+    toastTimer.current = window.setTimeout(() => {
+      setToastOn(false);
+      toastTimer.current = window.setTimeout(() => setMessage(""), 500);
+    }, 2600);
   }, []);
 
   const add = useCallback(
@@ -93,7 +99,7 @@ export function RequestProvider({ children }: { children: ReactNode }) {
   return (
     <RequestContext.Provider value={value}>
       {children}
-      <div className={`toast ${message ? "is-on" : ""}`} role="status" aria-live="polite">
+      <div className={`toast ${toastOn ? "is-on" : ""}`} role="status" aria-live="polite">
         {message ? (
           <>
             <IconCheck />

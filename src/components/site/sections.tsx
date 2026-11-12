@@ -16,7 +16,8 @@ import {
   type Finish,
 } from "../../site-data";
 import { formatClock, prefersReducedMotion, sunsetMinutes } from "./fx";
-import { IconArrow, IconChat, IconChevron, IconClock, IconClose, IconList, IconMenu, IconPhone, IconPin, IconPlus } from "./icons";
+import { openRoomCalculator } from "./calculator";
+import { IconArrow, IconChat, IconChevron, IconClock, IconClose, IconCube, IconList, IconMenu, IconPhone, IconPin, IconPlus } from "./icons";
 import { useRequest } from "./request";
 
 const navLinks = [
@@ -203,14 +204,19 @@ export function Sanitary() {
         <div className="san-copy" data-reveal>
           <h2 className="h2">المواد الصحية</h2>
           <p className="lead">أطقم حمامات ومغاسل وخلاطات تكمل ما بدأته الأرضية. اسألنا عن الموديلات المتوفرة في الفرعين.</p>
-          <button
-            type="button"
-            className={`btn ${added ? "btn-done" : "btn-primary"}`}
-            onClick={() => add({ key: "sanitary", title: "استفسار عن المواد الصحية", detail: "أطقم حمامات ومغاسل وخلاطات" })}
-            data-magnetic
-          >
-            {added ? "في طلبك" : "أضف استفساراً لطلبي"} <IconPlus />
-          </button>
+          <div className="san-actions">
+            <button
+              type="button"
+              className={`btn ${added ? "btn-done" : "btn-primary"}`}
+              onClick={() => add({ key: "sanitary", title: "استفسار عن المواد الصحية", detail: "أطقم حمامات ومغاسل وخلاطات" })}
+              data-magnetic
+            >
+              {added ? "في طلبك" : "أضف استفساراً لطلبي"} <IconPlus />
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={openRoomCalculator}>
+              <IconCube /> احسب بلاط حمامك
+            </button>
+          </div>
         </div>
         <figure className="san-img san-img-a" data-parallax="0.06" data-reveal>
           <img src="assets/cat-sanitary.jpg" alt="حمام حديث بطقم صحي أبيض وجدار أزرق" loading="lazy" width={1400} height={1050} />
