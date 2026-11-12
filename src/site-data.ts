@@ -143,7 +143,7 @@ export const branches: Branch[] = [
     hours: workHours,
     phones: [
       { name: "عبدالله", number: "0923898407" },
-      { name: "رحيم", number: "0947999993" },
+      { name: "عبدالرحيم", number: "0947999993" },
     ],
   },
 ];
