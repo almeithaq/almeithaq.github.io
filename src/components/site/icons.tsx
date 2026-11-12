@@ -127,3 +127,10 @@ export const IconSms = ({ className }: P) => (
     <path d="M7.5 10h9M7.5 13.5h6" />
   </svg>
 );
+export const IconYard = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <circle cx="17" cy="6" r="2.5" />
+    <path d="M2.5 20l5-7h9l5 7z" />
+    <path d="M12 13v7M5 16.5h14" />
+  </svg>
+);

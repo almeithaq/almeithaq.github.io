@@ -1380,7 +1380,7 @@ p {
 }
 .calc-mode-opts {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 6px;
   padding: 6px;
   border-radius: 16px;
@@ -1390,9 +1390,10 @@ p {
 .calc-mode-opt {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  padding: 0.7rem 0.85rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.7rem 0.8rem;
   border-radius: 12px;
   cursor: pointer;
   color: rgba(255, 255, 255, 0.86);
@@ -1592,8 +1593,81 @@ p {
 .calc-rotate {
   margin-top: 0.75rem;
 }
-.calc-walls > .field {
+.calc-walls > .field,
+.calc-yard > .field {
   margin-top: 1.2rem;
+}
+.calc-prod-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+.calc-prod {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.6rem 0.7rem;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.17);
+  cursor: pointer;
+  transition:
+    background 0.25s,
+    color 0.25s,
+    border-color 0.25s,
+    transform 0.25s var(--ease);
+}
+.calc-prod:hover {
+  border-color: rgba(255, 255, 255, 0.45);
+}
+.calc-prod input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.calc-prod:has(input:focus-visible) {
+  outline: 3px solid var(--glow);
+  outline-offset: 2px;
+}
+.calc-prod.is-on {
+  background: #fff;
+  color: var(--ink);
+  border-color: #fff;
+  transform: translateY(-2px);
+}
+.calc-prod-sw {
+  width: 42px;
+  height: 42px;
+  flex: none;
+  border-radius: 9px;
+  background: #c9ced5 center / cover;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    0 8px 16px -10px rgba(0, 0, 0, 0.7);
+}
+.calc-prod-sw[data-look="kotto"] {
+  background-image: url(assets/tex-kotto.jpg);
+}
+.calc-prod-sw[data-look="stone"] {
+  background-image: url(assets/tex-grey.jpg);
+}
+.calc-prod-sw[data-look="ivory"] {
+  background-image: linear-gradient(150deg, #f8f5ee, #e3dccd);
+}
+.calc-prod-txt {
+  display: grid;
+  min-width: 0;
+  line-height: 1.35;
+}
+.calc-prod-txt strong {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.calc-prod-txt small {
+  font-size: 0.78rem;
+  opacity: 0.75;
 }
 .calc-waste {
   display: grid;
@@ -1808,9 +1882,11 @@ input[type="range"] {
 }
 .plan-tile {
   fill: #eaf1fa;
+  transition: fill 0.45s;
 }
 .plan-grout {
   stroke: #285a96;
+  transition: stroke 0.45s;
 }
 .plan-cut-bg {
   fill: #ffe8d4;
@@ -1826,6 +1902,24 @@ input[type="range"] {
 }
 .rv-svg-wall .plan-grout {
   stroke: #7da5d6;
+}
+.rv-look-kotto .plan-tile {
+  fill: #d6d0c7;
+}
+.rv-look-kotto .plan-grout {
+  stroke: #6c665d;
+}
+.rv-look-ivory .plan-tile {
+  fill: #f1e9da;
+}
+.rv-look-ivory .plan-grout {
+  stroke: #9c8668;
+}
+.rv-look-stone .plan-tile {
+  fill: #bcc3ca;
+}
+.rv-look-stone .plan-grout {
+  stroke: #56606c;
 }
 .calc-legend {
   display: flex;
@@ -1858,6 +1952,18 @@ input[type="range"] {
 }
 .lg-cut {
   background: repeating-linear-gradient(45deg, #ffe8d4 0 3px, #dd8a3e 3px 5px);
+}
+.lg-look-kotto {
+  background: #d6d0c7;
+  box-shadow: inset 0 0 0 2px #6c665d;
+}
+.lg-look-ivory {
+  background: #f1e9da;
+  box-shadow: inset 0 0 0 2px #9c8668;
+}
+.lg-look-stone {
+  background: #bcc3ca;
+  box-shadow: inset 0 0 0 2px #56606c;
 }
 .calc-res {
   display: grid;
@@ -1943,15 +2049,37 @@ input[type="range"] {
   .calc-out {
     padding: 1rem;
   }
+  .calc-mode-opts {
+    gap: 4px;
+    padding: 4px;
+  }
   .calc-mode-opt {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.3rem;
-    padding: 0.65rem 0.75rem;
+    gap: 0.25rem;
+    padding: 0.6rem 0.55rem;
   }
   .calc-mode-opt svg {
     width: 26px;
     height: 26px;
+  }
+  .calc-mode-opt strong {
+    font-size: 0.9rem;
+  }
+  .calc-mode-opt small {
+    font-size: 0.74rem;
+  }
+  .calc-prod-grid {
+    grid-template-columns: 1fr;
+  }
+  .calc-prod {
+    gap: 0.6rem;
+    padding: 0.5rem 0.6rem;
+  }
+  .calc-prod-sw {
+    width: 34px;
+    height: 34px;
+  }
+  .calc-prod-txt strong {
+    font-size: 0.88rem;
   }
   .calc-row-3 {
     gap: 0.6rem;

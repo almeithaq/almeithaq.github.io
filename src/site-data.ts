@@ -47,19 +47,21 @@ export type Product = {
   note?: string;
   decor?: boolean; // يُرسم معه بلاط ديكور
   use?: Use; // أين يُركَّب، كما أوضحت الشركة
+  outdoor?: boolean; // يصلح للساحات الخارجية (أرضيات فقط)، كما أوضحت الشركة
 };
 
 // مكان التركيب كما أوضحت الشركة. الأصناف بدون قيمة تُركّب للأرضيات،
 // وحاسبة البلاط تبني منها مقاسات الأرضية ومقاسات الحيطان.
 export type Use = "floor" | "wall" | "both";
 export const useNames: Record<Use, string> = { floor: "يُركّب للأرضيات", wall: "يُركّب للحيطان", both: "يُركّب للأرضيات والحيطان" };
+export const outdoorLabel = "يُركّب للأرضيات والساحات الخارجية";
 
 export const products: Product[] = [
-  { id: "ly-ceramic-60", kind: "سيراميك", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "ivory" },
+  { id: "ly-ceramic-60", kind: "سيراميك", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "ivory", use: "floor", outdoor: true },
   { id: "ly-porcelain-120x60", kind: "بورسلين", origin: "libya", size: "120×60 سم", w: 120, h: 60, look: "marble", use: "both" },
   { id: "ly-wall-30x60", kind: "سيراميك حائطي", origin: "libya", size: "30×60 سم", w: 30, h: 60, look: "ivory", decor: true, note: "مع ديكور 30×60", use: "wall" },
-  { id: "ly-kotto-60", kind: "كوطو", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "kotto", note: "سمك 14 ملم" },
-  { id: "ly-kotto-50", kind: "كوطو", origin: "libya", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
+  { id: "ly-kotto-60", kind: "كوطو", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "kotto", note: "سمك 14 ملم", use: "floor", outdoor: true },
+  { id: "ly-kotto-50", kind: "كوطو", origin: "libya", size: "50×50 سم", w: 50, h: 50, look: "kotto", use: "floor", outdoor: true },
   { id: "ly-porcelain-80", kind: "بورسلين", origin: "libya", size: "80×80 سم", w: 80, h: 80, look: "marble" },
   { id: "ly-wall-40x80", kind: "سيراميك حائطي", origin: "libya", size: "40×80 سم", w: 40, h: 80, look: "ivory", decor: true, note: "مع ديكور 40×80", use: "both" },
   {
@@ -74,11 +76,11 @@ export const products: Product[] = [
     use: "both",
   },
   { id: "in-porcelain-80", kind: "بورسلين", origin: "india", size: "80×80 سم", w: 80, h: 80, look: "marble", finishes: ["لمعة", "مطفي", "نص لمعة"] },
-  { id: "in-porcelain-60", kind: "بورسلين", origin: "india", size: "60×60 سم", w: 60, h: 60, look: "stone" },
+  { id: "in-porcelain-60", kind: "بورسلين", origin: "india", size: "60×60 سم", w: 60, h: 60, look: "stone", use: "floor", outdoor: true },
   { id: "in-pool-30x60", kind: "سيراميك أحواض سباحة", origin: "india", size: "30×60 سم", w: 30, h: 60, look: "pool", use: "both" },
   { id: "in-porcelain-100", kind: "بورسلين", origin: "india", size: "1×1 متر", w: 100, h: 100, look: "marble" },
   { id: "in-porcelain-120x80", kind: "بورسلين", origin: "india", size: "120×80 سم", w: 120, h: 80, look: "stone" },
-  { id: "in-kotto-50", kind: "كوطو", origin: "india", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
+  { id: "in-kotto-50", kind: "كوطو", origin: "india", size: "50×50 سم", w: 50, h: 50, look: "kotto", use: "floor", outdoor: true },
   { id: "tr-porcelain-120x60", kind: "بورسلين", origin: "turkey", size: "120×60 سم", w: 120, h: 60, look: "marble", finishes: ["لمعة"], use: "both" },
   { id: "tr-marble-30x60", kind: "رخام", origin: "turkey", size: "30×60 سم", w: 30, h: 60, look: "marble", use: "floor" },
 ];

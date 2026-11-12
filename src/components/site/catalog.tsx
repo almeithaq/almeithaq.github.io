@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import { finishOrder, kinds, originNames, products, productTitle, useNames, type Finish, type Kind, type OriginId, type Product } from "../../site-data";
+import { finishOrder, kinds, originNames, outdoorLabel, products, productTitle, useNames, type Finish, type Kind, type OriginId, type Product } from "../../site-data";
 import { normalize, prefersReducedMotion } from "./fx";
 import { IconCheck, IconPlus, IconSearch, IconClose, IconRotate } from "./icons";
 import { useRequest } from "./request";
@@ -15,13 +15,13 @@ const haystack = new Map(
   products.map((p) => [
     p.id,
     normalize(
-      [p.kind, p.size, originNames[p.origin], p.origin, ...(p.finishes ?? []), p.note ?? "", p.use ? useNames[p.use] : "", `${p.w} ${p.h}`, `${p.h} ${p.w}`].join(" "),
+      [p.kind, p.size, originNames[p.origin], p.origin, ...(p.finishes ?? []), p.note ?? "", p.use ? useNames[p.use] : "", p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "", `${p.w} ${p.h}`, `${p.h} ${p.w}`].join(" "),
     ),
   ]),
 );
 
 export function openCalculator(p: Product) {
-  const detail: CalcDetail = { w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind, use: p.use };
+  const detail: CalcDetail = { id: p.id, w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind, use: p.use, outdoor: !!p.outdoor };
   window.dispatchEvent(new CustomEvent("am:calc", { detail }));
   document.getElementById("calculator")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }
@@ -223,7 +223,7 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
         <span className={`pc-origin pc-origin-${p.origin}`}>{originNames[p.origin]}</span>
         <h3>{p.kind}</h3>
         <p className="pc-size">{p.size}</p>
-        {p.use ? <p className="pc-use">{useNames[p.use]}</p> : null}
+        {p.outdoor || p.use ? <p className="pc-use">{p.outdoor ? outdoorLabel : useNames[p.use!]}</p> : null}
         {p.note ? <p className="pc-note">{p.note}</p> : null}
         {p.finishes && p.finishes.length > 1 ? (
           <div className="pc-finishes" role="radiogroup" aria-label={`لمعات ${productTitle(p)}`}>

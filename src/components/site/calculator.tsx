@@ -1,17 +1,17 @@
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
-import { products, type Product, type Use } from "../../site-data";
+import { originNames, products, productTitle, type Product, type Use } from "../../site-data";
 import { formatNumber, parseNumber, prefersReducedMotion } from "./fx";
-import { IconCube, IconFloor, IconNet, IconPlus, IconRotate } from "./icons";
+import { IconCube, IconFloor, IconNet, IconPlus, IconRotate, IconYard } from "./icons";
 import { useRequest } from "./request";
 
-// حاسبة البلاط: أرضية فقط، أو أرضية وحيطان للحمامات.
+// حاسبة البلاط: أرضية فقط، أو أرضية وحيطان للحمامات، أو ساحة خارجية من أصنافها.
 // تحسب البلاط الكامل والمقصوص حسب المخطط والكمية مع هامش الاحتياط، وترسم الغرفة مجسّمة أو مفرودة.
 
 type Size = { w: number; h: number };
-type Mode = "floor" | "room";
+type Mode = "floor" | "room" | "yard";
 type View = "3d" | "net";
 type Picked = { title: string; origin: string };
-export type CalcDetail = { w: number; h: number; title: string; origin: string; kind: string; use?: Use };
+export type CalcDetail = { id: string; w: number; h: number; title: string; origin: string; kind: string; use?: Use; outdoor?: boolean };
 
 const keyOf = (s: Size) => `${s.w}x${s.h}`;
 const sizes: Size[] = Array.from(new Map(products.map((p) => [`${p.w}x${p.h}`, { w: p.w, h: p.h }])).values()).sort(
@@ -30,7 +30,10 @@ const WALL_KIND = "سيراميك حائطي";
 const firstWall = products.find((p) => p.kind === WALL_KIND);
 const DEFAULT_WALL = firstWall && isWallKey(`${firstWall.w}x${firstWall.h}`) ? `${firstWall.w}x${firstWall.h}` : keyOf(wallSizes[0] ?? sizes[0]);
 // مقاسات مثال تتغير مع النوع ما دام الزائر لم يكتب مقاساته.
-const SAMPLE = { floor: { len: "5", wid: "4" }, room: { len: "2.5", wid: "2" } };
+const SAMPLE = { floor: { len: "5", wid: "4" }, room: { len: "2.5", wid: "2" }, yard: { len: "10", wid: "8" } };
+// أصناف الساحات الخارجية كما حددتها الشركة: الكوطو أولاً ثم السيراميك 60×60.
+const KOTTO = "كوطو";
+const yardProducts = products.filter((p) => p.outdoor).sort((a, b) => Number(b.kind === KOTTO) - Number(a.kind === KOTTO));
 const MAX_M = 200;
 const MAX_H = 10;
 const EPS = 1e-6;
@@ -76,7 +79,11 @@ export function Calculator() {
   const [waste, setWaste] = useState(10);
   const [floorProduct, setFloorProduct] = useState<Picked | null>(null);
   const [wallProduct, setWallProduct] = useState<Picked | null>(null);
+  const [yardId, setYardId] = useState(yardProducts[0]?.id ?? "");
+  const [yardOff, setYardOff] = useState("");
   const dimsTouched = useRef(false);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
 
   const changeMode = useCallback((m: Mode) => {
     setMode(m);
@@ -91,6 +98,12 @@ export function Calculator() {
       const d = (e as CustomEvent<CalcDetail>).detail;
       const picked = { title: d.title, origin: d.origin };
       const key = `${d.w}x${d.h}`;
+      // الكوطو، أو أي صنف خارجي والحاسبة على الساحة، يفتح حساب الساحة الخارجية.
+      if (d.outdoor && (d.kind === KOTTO || modeRef.current === "yard")) {
+        changeMode("yard");
+        setYardId(d.id);
+        return;
+      }
       // البلاط الحائطي يفتح حساب الحمام، وما يُركّب للأرضيات يضبط مقاس الأرضية.
       const toWall = d.use === "wall" || (d.use === "both" && d.kind === WALL_KIND);
       if (toWall && isWallKey(key)) {
@@ -114,16 +127,22 @@ export function Calculator() {
   }, [changeMode]);
 
   const room = mode === "room";
-  const floorSize = floorSizes.find((s) => keyOf(s) === floorKey) ?? floorSizes[0];
+  const yard = mode === "yard";
+  const yardProduct = yardProducts.find((p) => p.id === yardId) ?? yardProducts[0];
+  const floorSize = yard ? { w: yardProduct.w, h: yardProduct.h } : (floorSizes.find((s) => keyOf(s) === floorKey) ?? floorSizes[0]);
+  const rotFloor = yard ? false : floorRot;
   const wallSize = wallSizes.find((s) => keyOf(s) === wallKey) ?? wallSizes[0];
   const L = parseNumber(len);
   const W = parseNumber(wid);
   const H = parseNumber(hgt);
   const O = opening.trim() === "" ? 0 : parseNumber(opening);
+  const F = yard && yardOff.trim() !== "" ? parseNumber(yardOff) : 0;
   const lenErr = lengthError(len, L, "أدخل الطول", MAX_M);
   const widErr = lengthError(wid, W, "أدخل العرض", MAX_M);
   const hgtErr = room ? lengthError(hgt, H, "أدخل الارتفاع", MAX_H) : "";
-  const floorOk = !lenErr && !widErr;
+  const dimsOk = !lenErr && !widErr;
+  const offErr = !yard || yardOff.trim() === "" ? "" : !(F >= 0) ? "أدخل رقماً صحيحاً" : dimsOk && F >= L * W ? "أكبر من مساحة الساحة" : "";
+  const floorOk = dimsOk && !offErr;
   const wallGross = floorOk && room && !hgtErr ? 2 * (L + W) * H : 0;
   const openErr = !room || opening.trim() === "" ? "" : !(O >= 0) ? "أدخل رقماً صحيحاً" : wallGross > 0 && O >= wallGross ? "أكبر من مساحة الحيطان" : "";
   const wallsOk = room && floorOk && !hgtErr && !openErr;
@@ -132,12 +151,15 @@ export function Calculator() {
     if (!floorOk) return null;
     const lc = L * 100;
     const wc = W * 100;
-    const tw = floorRot ? floorSize.h : floorSize.w;
-    const th = floorRot ? floorSize.w : floorSize.h;
+    const tw = rotFloor ? floorSize.h : floorSize.w;
+    const th = rotFloor ? floorSize.w : floorSize.h;
     const lay = layoutOf(lc, wc, tw, th);
-    const buy = withWaste(lay.total, waste);
-    return { lc, wc, tw, th, total: lay.total, cut: lay.cut, area: L * W, buy, buyArea: (buy * tw * th) / 10000 };
-  }, [floorOk, L, W, floorRot, floorSize.w, floorSize.h, waste]);
+    // في الساحة: البلاطات التي تقع كاملة في المساحة غير المبلطة لا تُشترى.
+    const offTiles = Math.floor((F * 10000) / (tw * th) + EPS);
+    const total = Math.max(0, lay.total - offTiles);
+    const buy = withWaste(total, waste);
+    return { lc, wc, tw, th, total, cut: Math.min(total, lay.cut), area: L * W - F, buy, buyArea: (buy * tw * th) / 10000 };
+  }, [floorOk, L, W, F, rotFloor, floorSize.w, floorSize.h, waste]);
 
   const walls = useMemo(() => {
     if (!wallsOk || !floor) return null;
@@ -166,6 +188,22 @@ export function Calculator() {
 
   const addToRequest = () => {
     if (!floor || (room && !walls)) return;
+    if (yard) {
+      add({
+        key: `calc-yard-${yardProduct.id}-${len}x${wid}`,
+        title: productTitle(yardProduct),
+        detail: [
+          originNames[yardProduct.origin],
+          `ساحة خارجية ${dimsText}`,
+          F > 0 ? `بعد خصم ${formatNumber(F)} م² لا تُبلّط` : "",
+          `${floor.buy} بلاطة مع الاحتياط`,
+        ]
+          .filter(Boolean)
+          .join("، "),
+        area: formatNumber(floor.buyArea, 1),
+      });
+      return;
+    }
     add({
       key: `calc-floor-${floorProduct ? floorProduct.title : floorKey}-${len}x${wid}`,
       title: floorProduct ? floorProduct.title : `بلاط أرضية ${sizeLabel(floorSize)}`,
@@ -195,7 +233,7 @@ export function Calculator() {
       <div className="wrap">
         <div className="sec-head sec-head-light" data-reveal>
           <h2 className="h2">حاسبة البلاط</h2>
-          <p className="lead">أدخل مقاسات الغرفة واختر مقاس البلاط. وللحمام أضف ارتفاع الحيطان لنحسب البلاط الحائطي مع الأرضية، وشاهد الغرفة والكمية التقريبية فوراً.</p>
+          <p className="lead">اختر ما ستبلّطه: أرضية غرفة، أو حماماً بأرضيته وحيطانه، أو ساحة خارجية. أدخل المقاسات وشاهد المخطط والكمية التقريبية فوراً.</p>
         </div>
 
         <div className="calc" data-reveal>
@@ -203,16 +241,17 @@ export function Calculator() {
             <fieldset className="calc-mode">
               <legend>ماذا ستبلّط؟</legend>
               <div className="calc-mode-opts">
-                <ModeOption value="floor" on={!room} onPick={() => changeMode("floor")} icon={<IconFloor />} title="أرضية فقط" sub="صالات وغرف" />
+                <ModeOption value="floor" on={mode === "floor"} onPick={() => changeMode("floor")} icon={<IconFloor />} title="أرضية فقط" sub="صالات وغرف" />
                 <ModeOption value="room" on={room} onPick={() => changeMode("room")} icon={<IconCube />} title="أرضية وحيطان" sub="حمامات" />
+                <ModeOption value="yard" on={yard} onPick={() => changeMode("yard")} icon={<IconYard />} title="ساحة خارجية" sub="حوش وساحات" />
               </div>
             </fieldset>
 
-            {floorProduct ? <PickedProduct label={room ? "صنف الأرضية" : "الصنف"} p={floorProduct} onClear={() => setFloorProduct(null)} /> : null}
+            {floorProduct && !yard ? <PickedProduct label={room ? "صنف الأرضية" : "الصنف"} p={floorProduct} onClear={() => setFloorProduct(null)} /> : null}
             {room && wallProduct ? <PickedProduct label="الصنف الحائطي" p={wallProduct} onClear={() => setWallProduct(null)} /> : null}
 
             <fieldset className="calc-dims">
-              <legend>مقاسات الغرفة بالمتر</legend>
+              <legend>{yard ? "مقاسات الساحة بالمتر" : "مقاسات الغرفة بالمتر"}</legend>
               <div className={`calc-row ${room ? "calc-row-3" : ""}`}>
                 <Field
                   id="calc-len"
@@ -239,19 +278,34 @@ export function Calculator() {
               {room ? <p className="calc-hint calc-appear">الارتفاع هو المكان الذي سيصل إليه البلاط على الحيطان، وغالباً يكون حتى السقف.</p> : null}
             </fieldset>
 
-            <SizePicker
-              options={floorSizes}
-              name="calc-floor-size"
-              legend={room ? "مقاس بلاط الأرضية" : "مقاس البلاط"}
-              value={floorKey}
-              rotated={floorRot}
-              onPick={(k) => {
-                setFloorKey(k);
-                setFloorRot(false);
-                setFloorProduct(null);
-              }}
-              onRotate={() => setFloorRot((v) => !v)}
-            />
+            {yard ? (
+              <div className="calc-yard calc-appear">
+                <YardPicker value={yardProduct.id} onPick={setYardId} />
+                <Field
+                  id="calc-off"
+                  label="خصم مساحة لا تُبلّط (م²)"
+                  value={yardOff}
+                  onChange={setYardOff}
+                  error={offErr}
+                  placeholder="0"
+                  hint="اختياري: مثل أحواض الزرع، أو مساحة البيت إذا كانت الساحة حوله."
+                />
+              </div>
+            ) : (
+              <SizePicker
+                options={floorSizes}
+                name="calc-floor-size"
+                legend={room ? "مقاس بلاط الأرضية" : "مقاس البلاط"}
+                value={floorKey}
+                rotated={floorRot}
+                onPick={(k) => {
+                  setFloorKey(k);
+                  setFloorRot(false);
+                  setFloorProduct(null);
+                }}
+                onRotate={() => setFloorRot((v) => !v)}
+              />
+            )}
 
             {room ? (
               <div className="calc-walls calc-appear">
@@ -290,7 +344,7 @@ export function Calculator() {
 
           <div className="calc-out">
             <div className="calc-view-bar">
-              <span className="calc-view-title">{room ? "الأرضية والحيطان" : "مخطط الأرضية"}</span>
+              <span className="calc-view-title">{room ? "الأرضية والحيطان" : yard ? "مخطط الساحة" : "مخطط الأرضية"}</span>
               {walls ? (
                 <div className="calc-view-toggle" role="group" aria-label="طريقة عرض الغرفة">
                   <button type="button" className={view === "3d" ? "is-on" : ""} aria-pressed={view === "3d"} onClick={() => setView("3d")}>
@@ -304,7 +358,7 @@ export function Calculator() {
             </div>
 
             {floor ? (
-              <RoomView floor={floor} walls={walls} view={view} />
+              <RoomView floor={floor} walls={walls} view={view} look={yard ? yardProduct.look : undefined} />
             ) : (
               <div className="calc-plan calc-plan-off">
                 <p className="calc-plan-empty">أدخل الطول والعرض لرسم المخطط</p>
@@ -314,7 +368,7 @@ export function Calculator() {
             {floor ? (
               <div className="calc-legend">
                 <span>
-                  <i className="lg-tile" /> {walls ? "بلاط الأرضية" : "بلاطة كاملة"}
+                  <i className={`lg-tile${yard ? ` lg-look-${yardProduct.look}` : ""}`} /> {walls ? "بلاط الأرضية" : "بلاطة كاملة"}
                 </span>
                 {walls ? (
                   <span>
@@ -330,10 +384,10 @@ export function Calculator() {
 
             <div className="calc-res" aria-live="polite">
               <ResultGroup
-                title={room ? "الأرضية" : undefined}
-                swatch="lg-tile"
-                size={sizeLabel(floorSize)}
-                areaLabel="مساحة الأرضية"
+                title={room ? "الأرضية" : yard ? "الساحة" : undefined}
+                swatch={`lg-tile${yard ? ` lg-look-${yardProduct.look}` : ""}`}
+                size={yard ? `${productTitle(yardProduct)}، ${originNames[yardProduct.origin]}` : sizeLabel(floorSize)}
+                areaLabel={yard ? (F > 0 ? "مساحة الساحة بعد الخصم" : "مساحة الساحة") : "مساحة الأرضية"}
                 area={floor ? `${formatNumber(floor.area)} م²` : "-"}
                 total={floor?.total}
                 cut={floor?.cut}
@@ -363,6 +417,7 @@ export function Calculator() {
             <p className="calc-note">
               النتيجة تقديرية. عدد الكراتين يحدده الفرع حسب الصنف، وننصح بمراجعة المقاسات معنا قبل الشراء.
               {room ? " حساب الحيطان يفترض تبليط الحيطان الأربعة حتى الارتفاع الذي أدخلته." : ""}
+              {yard ? " حساب الساحة لأرضيتها فقط، من أصناف الكوطو والسيراميك 60×60 المناسبة للخارج." : ""}
             </p>
           </div>
         </div>
@@ -438,6 +493,32 @@ function SizePicker({
           <IconRotate /> تدوير اتجاه البلاط
         </button>
       ) : null}
+    </fieldset>
+  );
+}
+
+function YardPicker({ value, onPick }: { value: string; onPick: (id: string) => void }) {
+  return (
+    <fieldset className="calc-sizes">
+      <legend>صنف الساحة</legend>
+      <div className="calc-prod-grid">
+        {yardProducts.map((p) => {
+          const on = p.id === value;
+          return (
+            <label key={p.id} className={`calc-prod ${on ? "is-on" : ""}`}>
+              <input type="radio" name="calc-yard-product" value={p.id} checked={on} onChange={() => onPick(p.id)} />
+              <span className="calc-prod-sw" data-look={p.look} aria-hidden="true" />
+              <span className="calc-prod-txt">
+                <strong>{productTitle(p)}</strong>
+                <small>
+                  {originNames[p.origin]}
+                  {p.note ? `، ${p.note}` : ""}
+                </small>
+              </span>
+            </label>
+          );
+        })}
+      </div>
     </fieldset>
   );
 }
@@ -589,7 +670,7 @@ function fit3d(Lp: number, Wp: number, Hp: number, aw: number, ah: number, P: nu
 
 const cmText = (cm: number) => formatNumber(cm / 100);
 
-function RoomView({ floor, walls, view }: { floor: FloorDraw; walls: WallDraw | null; view: View }) {
+function RoomView({ floor, walls, view, look }: { floor: FloorDraw; walls: WallDraw | null; view: View; look?: string }) {
   const boxRef = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; phi: number; id: number } | null>(null);
   const [box, setBox] = useState({ w: 520, h: 390 });
@@ -711,7 +792,7 @@ function RoomView({ floor, walls, view }: { floor: FloorDraw; walls: WallDraw | 
       <div className="rv-scene" style={sceneStyle}>
         <div className="rv-shadow" style={{ left: -Lp / 2, top: -Wp / 2, width: Lp, height: Wp }} />
         <div className="rv-face rv-floor" style={{ left: -Lp / 2, top: -Wp / 2, width: Lp, height: Wp }}>
-          <TileFace len={floor.lc} hgt={floor.wc} tw={floor.tw} th={floor.th} u={u} variant="floor" />
+          <TileFace len={floor.lc} hgt={floor.wc} tw={floor.tw} th={floor.th} u={u} variant="floor" look={look} />
           <span className="rv-label">{`${cmText(floor.lc)} × ${cmText(floor.wc)} م`}</span>
         </div>
         {wallDefs.map((w, i) => (
@@ -753,6 +834,7 @@ const TileFace = memo(function TileFace({
   th,
   u,
   variant,
+  look,
 }: {
   len: number;
   hgt: number;
@@ -760,6 +842,7 @@ const TileFace = memo(function TileFace({
   th: number;
   u: number;
   variant: "floor" | "wall";
+  look?: string;
 }) {
   const id = `tf-${useId().replace(/[^a-zA-Z0-9]/g, "")}-`;
   const lay = layoutOf(len, hgt, tw, th);
@@ -770,7 +853,7 @@ const TileFace = memo(function TileFace({
   const grout = Math.min(1.1 * u, Math.min(tw, th) / 5);
   const hatch = 7 * u;
   return (
-    <svg viewBox={`0 0 ${len} ${hgt}`} preserveAspectRatio="none" className={`rv-svg rv-svg-${variant}`}>
+    <svg viewBox={`0 0 ${len} ${hgt}`} preserveAspectRatio="none" className={`rv-svg rv-svg-${variant}${look ? ` rv-look-${look}` : ""}`}>
       <defs>
         <pattern id={`${id}a`} x={0} y={py} width={tw} height={th} patternUnits="userSpaceOnUse">
           <rect width={tw} height={th} className="plan-tile" />
