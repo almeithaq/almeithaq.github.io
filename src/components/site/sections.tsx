@@ -372,12 +372,28 @@ function Lightbox({ index, onClose, onNav }: { index: number; onClose: () => voi
   );
 }
 
+// حالة الفروع الآن حسب أوقات العمل: من 10 صباحاً حتى المغرب، والجمعة عطلة (بتوقيت ليبيا).
+function shopStatus(now: number) {
+  const local = new Date(now + tajouraCoords.utcOffset * 3600 * 1000);
+  const day = local.getUTCDay();
+  const minutes = local.getUTCHours() * 60 + local.getUTCMinutes();
+  const sunset = sunsetMinutes(local, tajouraCoords.lat, tajouraCoords.lng, tajouraCoords.utcOffset);
+  if (sunset === null) return null;
+  const opens = workHours.opensText;
+  if (day === workHours.closedDay) return { open: false, text: `مغلق اليوم (الجمعة)، نفتح غداً ${opens}` };
+  if (minutes < workHours.opensAt) return { open: false, text: `مغلق الآن، نفتح اليوم ${opens}` };
+  if (minutes < sunset) return { open: true, text: `مفتوح الآن حتى المغرب، نحو ${formatClock(sunset)}` };
+  const tomorrowClosed = (day + 1) % 7 === workHours.closedDay;
+  return { open: false, text: tomorrowClosed ? `مغلق الآن، نفتح السبت ${opens}` : `مغلق الآن، نفتح غداً ${opens}` };
+}
+
 export function Branches() {
-  const [maghrib, setMaghrib] = useState<string | null>(null);
+  const [status, setStatus] = useState<{ open: boolean; text: string } | null>(null);
   useEffect(() => {
-    const libyaNow = new Date(Date.now() + tajouraCoords.utcOffset * 3600 * 1000);
-    const m = sunsetMinutes(libyaNow, tajouraCoords.lat, tajouraCoords.lng, tajouraCoords.utcOffset);
-    if (m !== null) setMaghrib(formatClock(m));
+    const update = () => setStatus(shopStatus(Date.now()));
+    update();
+    const t = window.setInterval(update, 60000);
+    return () => window.clearInterval(t);
   }, []);
 
   return (
@@ -385,7 +401,7 @@ export function Branches() {
       <div className="wrap">
         <div className="sec-head" data-reveal>
           <h2 className="h2">فروعنا في تاجوراء</h2>
-          <p className="lead">زرنا لتعاين الأصناف بنفسك، أو اتصل بأحد موظفينا مباشرة.</p>
+          <p className="lead">زرنا لتعاين الأصناف بنفسك، أو راسل أحد موظفينا على واتساب أو اتصل به مباشرة.</p>
         </div>
         <div className="br-grid">
           {branches.map((b, bi) => (
@@ -395,12 +411,24 @@ export function Branches() {
                 <h3>{b.name}</h3>
               </div>
               <p className="br-line">
-                <IconPin /> {b.address}
+                <IconPin /> <span>{b.address}</span>
               </p>
+              {b.mapUrl ? (
+                <a className="btn btn-ghost btn-sm br-map" href={b.mapUrl} target="_blank" rel="noopener noreferrer" aria-label={`موقع ${b.name} على خرائط Google`}>
+                  <IconPin /> افتح الموقع على الخريطة <IconArrow />
+                </a>
+              ) : null}
               <p className="br-line">
-                <IconClock /> {workHours}
-                {maghrib ? <span className="br-today">المغرب اليوم نحو {maghrib}</span> : null}
+                <IconClock />
+                <span>
+                  {workHours.days}، {workHours.time} <span className="br-off">{workHours.closed}</span>
+                </span>
               </p>
+              {status ? (
+                <p className={`br-status ${status.open ? "is-open" : ""}`}>
+                  <i aria-hidden="true" /> {status.text}
+                </p>
+              ) : null}
               <ul className="br-phones">
                 {b.phones.map((p) => (
                   <li key={p.number}>

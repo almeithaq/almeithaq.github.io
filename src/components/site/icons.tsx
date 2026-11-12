@@ -121,3 +121,9 @@ export const IconNet = ({ className }: P) => (
     <path d="M8.5 8.5h7v7h-7z" />
   </svg>
 );
+export const IconSms = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <path d="M4 5.5h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H9l-4.5 3v-3H4a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1z" />
+    <path d="M7.5 10h9M7.5 13.5h6" />
+  </svg>
+);

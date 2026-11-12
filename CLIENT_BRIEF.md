@@ -35,7 +35,10 @@ Products or Services: موجودة في src/site-data.ts (16 صنفاً حسب �
 Business Contact Details:
 - الفرع الرئيسي: تاجوراء، سبان، بجانب السوق الشعبي. سلمان 0924035518، أحمد 0912910643، عبدالعزيز 0928106906
 - الفرع الثاني: تاجوراء، بئر الأسطى ميلاد، قبل أربع شوارع الكهرباء. عبدالله 0923898407، عبدالرحيم 0947999993
-- ساعات العمل: من 10 صباحاً حتى المغرب
+- أوقات العمل: كل الأيام ما عدا الجمعة، من 10 صباحاً حتى المغرب
+- كل أرقام الموظفين عليها واتساب
+- خرائط الفروع: الرئيسي https://maps.app.goo.gl/yHfoANptu8CkHU89A ، الثاني https://maps.app.goo.gl/Wb6JiLGWRNP66GyT6
+- التركيب: الحائطي 30×60 للحيطان، و40×80 و120×60 للحيطان والأرضيات
 - فيسبوك: https://www.facebook.com/share/197E7R6mc2/
 - تيك توك: @almothaq_company، @almesraticeramics_، @abdalraheem.almosraty
 
@@ -45,4 +48,4 @@ Existing Website or Repository: https://almeithaq.github.io (المستودع al
 
 Domain and Hosting: GitHub Pages مجاناً على almeithaq.github.io، ولم يُشترَ نطاق خاص
 
-Additional Instructions: لا تُخترع معلومات. بانتظار من العميل: أي الأرقام عليها واتساب، روابط مواقع الفروع على خرائط Google، أيام العمل والإغلاق، العروض الحالية، وصور منتجات حقيقية إن وجدت.
+Additional Instructions: لا تُخترع معلومات. بانتظار من العميل: العروض الحالية، وصور الأصناف الحقيقية (وعد العميل بإرسالها).

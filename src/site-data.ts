@@ -46,16 +46,25 @@ export type Product = {
   finishes?: Finish[];
   note?: string;
   decor?: boolean; // يُرسم معه بلاط ديكور
+  use?: Use; // أين يُركَّب، كما أوضحت الشركة
 };
+
+export type Use = "wall" | "both";
+export const useNames: Record<Use, string> = { wall: "يُركّب للحيطان", both: "يُركّب للأرضيات والحيطان" };
+
+// مقاسات حاسبة البلاط حسب طريقة التركيب كما أوضحت الشركة:
+// 30×60 للحيطان فقط، و40×80 و120×60 للحيطان والأرضيات، وبقية المقاسات للأرضيات.
+export const wallSizeKeys = ["30x60", "40x80", "120x60"];
+export const wallOnlySizeKeys = ["30x60"];
 
 export const products: Product[] = [
   { id: "ly-ceramic-60", kind: "سيراميك", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "ivory" },
-  { id: "ly-porcelain-120x60", kind: "بورسلين", origin: "libya", size: "120×60 سم", w: 120, h: 60, look: "marble" },
-  { id: "ly-wall-30x60", kind: "سيراميك حائطي", origin: "libya", size: "30×60 سم", w: 30, h: 60, look: "ivory", decor: true, note: "مع ديكور 30×60" },
+  { id: "ly-porcelain-120x60", kind: "بورسلين", origin: "libya", size: "120×60 سم", w: 120, h: 60, look: "marble", use: "both" },
+  { id: "ly-wall-30x60", kind: "سيراميك حائطي", origin: "libya", size: "30×60 سم", w: 30, h: 60, look: "ivory", decor: true, note: "مع ديكور 30×60", use: "wall" },
   { id: "ly-kotto-60", kind: "كوطو", origin: "libya", size: "60×60 سم", w: 60, h: 60, look: "kotto", note: "سمك 14 ملم" },
   { id: "ly-kotto-50", kind: "كوطو", origin: "libya", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
   { id: "ly-porcelain-80", kind: "بورسلين", origin: "libya", size: "80×80 سم", w: 80, h: 80, look: "marble" },
-  { id: "ly-wall-40x80", kind: "سيراميك حائطي", origin: "libya", size: "40×80 سم", w: 40, h: 80, look: "ivory", decor: true, note: "مع ديكور 40×80" },
+  { id: "ly-wall-40x80", kind: "سيراميك حائطي", origin: "libya", size: "40×80 سم", w: 40, h: 80, look: "ivory", decor: true, note: "مع ديكور 40×80", use: "both" },
   {
     id: "in-porcelain-120x60",
     kind: "بورسلين",
@@ -65,6 +74,7 @@ export const products: Product[] = [
     h: 60,
     look: "marble",
     finishes: ["لمعة", "مطفي", "نص لمعة", "دبل لمعة"],
+    use: "both",
   },
   { id: "in-porcelain-80", kind: "بورسلين", origin: "india", size: "80×80 سم", w: 80, h: 80, look: "marble", finishes: ["لمعة", "مطفي", "نص لمعة"] },
   { id: "in-porcelain-60", kind: "بورسلين", origin: "india", size: "60×60 سم", w: 60, h: 60, look: "stone" },
@@ -72,7 +82,7 @@ export const products: Product[] = [
   { id: "in-porcelain-100", kind: "بورسلين", origin: "india", size: "1×1 متر", w: 100, h: 100, look: "marble" },
   { id: "in-porcelain-120x80", kind: "بورسلين", origin: "india", size: "120×80 سم", w: 120, h: 80, look: "stone" },
   { id: "in-kotto-50", kind: "كوطو", origin: "india", size: "50×50 سم", w: 50, h: 50, look: "kotto" },
-  { id: "tr-porcelain-120x60", kind: "بورسلين", origin: "turkey", size: "120×60 سم", w: 120, h: 60, look: "marble", finishes: ["لمعة"] },
+  { id: "tr-porcelain-120x60", kind: "بورسلين", origin: "turkey", size: "120×60 سم", w: 120, h: 60, look: "marble", finishes: ["لمعة"], use: "both" },
   { id: "tr-marble-30x60", kind: "رخام", origin: "turkey", size: "30×60 سم", w: 30, h: 60, look: "marble" },
 ];
 
@@ -106,27 +116,36 @@ export const offers: Offer[] = [];
 export type Phone = { name: string; number: string; whatsapp?: boolean };
 export type Branch = { id: string; name: string; address: string; phones: Phone[]; mapUrl?: string };
 
-// ساعات العمل كما أرسلتها الشركة (لم تُذكر أيام الإغلاق).
-export const workHours = "من 10 صباحاً حتى المغرب";
+// أوقات العمل كما أرسلتها الشركة: كل الأيام ما عدا الجمعة، من 10 صباحاً حتى المغرب.
+export const workHours = {
+  days: "من السبت إلى الخميس",
+  time: "من 10 صباحاً حتى المغرب",
+  closed: "الجمعة عطلة",
+  opensAt: 10 * 60, // بالدقائق من منتصف الليل بتوقيت ليبيا
+  opensText: "10 صباحاً",
+  closedDay: 5, // الجمعة (الأحد = 0)
+};
 
 export const branches: Branch[] = [
   {
     id: "main",
     name: "الفرع الرئيسي",
     address: "تاجوراء، سبان، بجانب السوق الشعبي",
+    mapUrl: "https://maps.app.goo.gl/yHfoANptu8CkHU89A",
     phones: [
-      { name: "سلمان", number: "0924035518" },
-      { name: "أحمد", number: "0912910643" },
-      { name: "عبدالعزيز", number: "0928106906" },
+      { name: "سلمان", number: "0924035518", whatsapp: true },
+      { name: "أحمد", number: "0912910643", whatsapp: true },
+      { name: "عبدالعزيز", number: "0928106906", whatsapp: true },
     ],
   },
   {
     id: "second",
     name: "الفرع الثاني",
     address: "تاجوراء، بئر الأسطى ميلاد، قبل أربع شوارع الكهرباء",
+    mapUrl: "https://maps.app.goo.gl/Wb6JiLGWRNP66GyT6",
     phones: [
-      { name: "عبدالله", number: "0923898407" },
-      { name: "عبدالرحيم", number: "0947999993" },
+      { name: "عبدالله", number: "0923898407", whatsapp: true },
+      { name: "عبدالرحيم", number: "0947999993", whatsapp: true },
     ],
   },
 ];
@@ -135,6 +154,8 @@ export const branches: Branch[] = [
 export const intlNumber = (phone: string) => `218${phone.replace(/\D/g, "").replace(/^0/, "")}`;
 export const telHref = (phone: string) => `tel:+${intlNumber(phone)}`;
 export const waHref = (phone: string, text: string) => `https://wa.me/${intlNumber(phone)}?text=${encodeURIComponent(text)}`;
+// رسالة نصية بنص جاهز (الصيغة ?&body= تعمل على آيفون وأندرويد).
+export const smsHref = (phone: string, text: string) => `sms:+${intlNumber(phone)}?&body=${encodeURIComponent(text)}`;
 
 // إحداثيات تاجوراء التقريبية لحساب وقت المغرب اليومي (توقيت ليبيا UTC+2)
 export const tajouraCoords = { lat: 32.882, lng: 13.35, utcOffset: 2 };

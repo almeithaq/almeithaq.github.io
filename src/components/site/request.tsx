@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
-import { branches, company, telHref, waHref } from "../../site-data";
-import { IconCheck, IconClose, IconCopy, IconList, IconPhone, IconChat, IconTrash, IconArrow } from "./icons";
+import { branches, company, smsHref, telHref, waHref } from "../../site-data";
+import { IconCheck, IconClose, IconCopy, IconList, IconPhone, IconChat, IconSms, IconTrash, IconArrow } from "./icons";
 
 // قائمة طلب الزائر: يجمع فيها الأصناف والمساحات، ثم يتصل بالفرع أو ينسخ الطلب.
 export type RequestItem = { key: string; title: string; detail?: string; area?: string };
@@ -252,20 +252,24 @@ export function RequestDrawer() {
               </div>
             </fieldset>
 
+            <p className="dr-send-lead">اختر الموظف وأرسل له طلبك برسالة واتساب أو رسالة نصية، والطلب يُكتب في الرسالة جاهزاً. ويمكنك الاتصال به مباشرة.</p>
             <div className="dr-contacts">
               {branch.phones.map((p) => (
                 <div key={p.number} className="dr-contact">
-                  <div>
+                  <div className="dr-contact-who">
                     <strong>{p.name}</strong>
                     <span dir="ltr">{p.number}</span>
                   </div>
                   <div className="dr-contact-actions">
                     {p.whatsapp ? (
-                      <a className="btn btn-wa" href={waHref(p.number, text)} target="_blank" rel="noopener noreferrer">
+                      <a className="btn btn-wa" href={waHref(p.number, text)} target="_blank" rel="noopener noreferrer" aria-label={`أرسل الطلب إلى ${p.name} عبر واتساب`}>
                         <IconChat /> واتساب
                       </a>
                     ) : null}
-                    <a className="btn btn-ghost" href={telHref(p.number)}>
+                    <a className="btn btn-msg" href={smsHref(p.number, text)} aria-label={`أرسل الطلب إلى ${p.name} برسالة نصية`}>
+                      <IconSms /> رسالة
+                    </a>
+                    <a className="btn btn-ghost" href={telHref(p.number)} aria-label={`اتصال بـ${p.name}: ${p.number}`}>
                       <IconPhone /> اتصال
                     </a>
                   </div>
@@ -274,7 +278,7 @@ export function RequestDrawer() {
             </div>
 
             <div className="dr-foot">
-              <button type="button" className="btn btn-primary" onClick={onCopy}>
+              <button type="button" className="btn btn-ghost" onClick={onCopy}>
                 <IconCopy /> نسخ الطلب
               </button>
               <button
@@ -288,7 +292,7 @@ export function RequestDrawer() {
                 مسح القائمة
               </button>
             </div>
-            <p className="muted small">انسخ الطلب وأرسله في رسالة، أو اتصل مباشرة واذكر الأصناف والمساحات.</p>
+            <p className="muted small">بعد فتح واتساب أو الرسائل اضغط «إرسال». وإن لم يظهر النص، انسخ الطلب والصقه في الرسالة.</p>
           </div>
         )}
       </aside>

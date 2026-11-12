@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
-import { products } from "../../site-data";
+import { products, wallOnlySizeKeys, wallSizeKeys } from "../../site-data";
 import { formatNumber, parseNumber, prefersReducedMotion } from "./fx";
 import { IconCube, IconFloor, IconNet, IconPlus, IconRotate } from "./icons";
 import { useRequest } from "./request";
@@ -18,9 +18,14 @@ const sizes: Size[] = Array.from(new Map(products.map((p) => [`${p.w}x${p.h}`, {
   (a, b) => a.w * a.h - b.w * b.h || a.w - b.w,
 );
 const sizeLabel = (s: Size) => (s.w === 100 && s.h === 100 ? "1×1 متر" : `${s.w}×${s.h} سم`);
+// مقاسات الأرضية بدون المقاسات الحائطية فقط، ومقاسات الحيطان كما أوضحت الشركة.
+const floorSizes = sizes.filter((s) => !wallOnlySizeKeys.includes(keyOf(s)));
+const wallSizes = sizes.filter((s) => wallSizeKeys.includes(keyOf(s)));
+const isFloorKey = (k: string) => floorSizes.some((s) => keyOf(s) === k);
+const isWallKey = (k: string) => wallSizes.some((s) => keyOf(s) === k);
 const WALL_KIND = "سيراميك حائطي";
 const firstWall = products.find((p) => p.kind === WALL_KIND);
-const DEFAULT_WALL = firstWall ? `${firstWall.w}x${firstWall.h}` : keyOf(sizes[0]);
+const DEFAULT_WALL = firstWall && isWallKey(`${firstWall.w}x${firstWall.h}`) ? `${firstWall.w}x${firstWall.h}` : keyOf(wallSizes[0] ?? sizes[0]);
 // مقاسات مثال تتغير مع النوع ما دام الزائر لم يكتب مقاساته.
 const SAMPLE = { floor: { len: "5", wid: "4" }, room: { len: "2.5", wid: "2" } };
 const MAX_M = 200;
@@ -82,13 +87,15 @@ export function Calculator() {
     const onCalc = (e: Event) => {
       const d = (e as CustomEvent<CalcDetail>).detail;
       const picked = { title: d.title, origin: d.origin };
-      if (d.kind === WALL_KIND) {
+      const key = `${d.w}x${d.h}`;
+      // البلاط الحائطي والمقاسات التي تُركّب على الحيطان فقط تفتح حساب الحمام.
+      if (isWallKey(key) && (d.kind === WALL_KIND || !isFloorKey(key))) {
         changeMode("room");
-        setWallKey(`${d.w}x${d.h}`);
+        setWallKey(key);
         setWallRot(false);
         setWallProduct(picked);
-      } else {
-        setFloorKey(`${d.w}x${d.h}`);
+      } else if (isFloorKey(key)) {
+        setFloorKey(key);
         setFloorRot(false);
         setFloorProduct(picked);
       }
@@ -103,8 +110,8 @@ export function Calculator() {
   }, [changeMode]);
 
   const room = mode === "room";
-  const floorSize = sizes.find((s) => keyOf(s) === floorKey) ?? sizes[0];
-  const wallSize = sizes.find((s) => keyOf(s) === wallKey) ?? sizes[0];
+  const floorSize = floorSizes.find((s) => keyOf(s) === floorKey) ?? floorSizes[0];
+  const wallSize = wallSizes.find((s) => keyOf(s) === wallKey) ?? wallSizes[0];
   const L = parseNumber(len);
   const W = parseNumber(wid);
   const H = parseNumber(hgt);
@@ -229,6 +236,7 @@ export function Calculator() {
             </fieldset>
 
             <SizePicker
+              options={floorSizes}
               name="calc-floor-size"
               legend={room ? "مقاس بلاط الأرضية" : "مقاس البلاط"}
               value={floorKey}
@@ -244,6 +252,7 @@ export function Calculator() {
             {room ? (
               <div className="calc-walls calc-appear">
                 <SizePicker
+                  options={wallSizes}
                   name="calc-wall-size"
                   legend="مقاس البلاط الحائطي"
                   value={wallKey}
@@ -385,6 +394,7 @@ function PickedProduct({ label, p, onClear }: { label: string; p: Picked; onClea
 }
 
 function SizePicker({
+  options,
   name,
   legend,
   value,
@@ -392,6 +402,7 @@ function SizePicker({
   onPick,
   onRotate,
 }: {
+  options: Size[];
   name: string;
   legend: string;
   value: string;
@@ -399,12 +410,12 @@ function SizePicker({
   onPick: (key: string) => void;
   onRotate: () => void;
 }) {
-  const selected = sizes.find((s) => keyOf(s) === value) ?? sizes[0];
+  const selected = options.find((s) => keyOf(s) === value) ?? options[0];
   return (
     <fieldset className="calc-sizes">
       <legend>{legend}</legend>
-      <div className="calc-size-grid">
-        {sizes.map((s) => {
+      <div className="calc-size-grid" style={{ gridTemplateColumns: `repeat(${Math.min(4, options.length)}, 1fr)` }}>
+        {options.map((s) => {
           const key = keyOf(s);
           const on = key === value;
           const w = on && rotated ? s.h : s.w;
