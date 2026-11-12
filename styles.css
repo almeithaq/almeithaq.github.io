@@ -221,3 +221,5 @@ html, body { background: #102B52; color: #fff; color-scheme: dark; }
   html { scroll-behavior: auto; }
 }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+.am-phones { display: flex; flex-wrap: wrap; gap: .35rem 1.3rem; }
+.am-phones .am-branch-link { font-size: 1.08rem; letter-spacing: .02em; }
