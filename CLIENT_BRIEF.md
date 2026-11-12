@@ -38,7 +38,7 @@ Business Contact Details:
 - أوقات العمل: كل الأيام ما عدا الجمعة، من 10 صباحاً حتى المغرب
 - كل أرقام الموظفين عليها واتساب
 - خرائط الفروع: الرئيسي https://maps.app.goo.gl/yHfoANptu8CkHU89A ، الثاني https://maps.app.goo.gl/Wb6JiLGWRNP66GyT6
-- التركيب: الحائطي 30×60 للحيطان، و40×80 و120×60 للحيطان والأرضيات
+- التركيب: الحائطي 30×60 للحيطان، و40×80 و120×60 للحيطان والأرضيات، والرخام التركي 30×60 للأرضيات فقط، وسيراميك الأحواض 30×60 للأرضيات والحيطان
 - فيسبوك: https://www.facebook.com/share/197E7R6mc2/
 - تيك توك: @almothaq_company، @almesraticeramics_، @abdalraheem.almosraty
 

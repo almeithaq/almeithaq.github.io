@@ -21,7 +21,7 @@ const haystack = new Map(
 );
 
 export function openCalculator(p: Product) {
-  const detail: CalcDetail = { w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind };
+  const detail: CalcDetail = { w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind, use: p.use };
   window.dispatchEvent(new CustomEvent("am:calc", { detail }));
   document.getElementById("calculator")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
 }

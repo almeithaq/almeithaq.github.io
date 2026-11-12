@@ -1,5 +1,5 @@
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
-import { products, wallOnlySizeKeys, wallSizeKeys } from "../../site-data";
+import { products, type Product, type Use } from "../../site-data";
 import { formatNumber, parseNumber, prefersReducedMotion } from "./fx";
 import { IconCube, IconFloor, IconNet, IconPlus, IconRotate } from "./icons";
 import { useRequest } from "./request";
@@ -11,16 +11,19 @@ type Size = { w: number; h: number };
 type Mode = "floor" | "room";
 type View = "3d" | "net";
 type Picked = { title: string; origin: string };
-export type CalcDetail = { w: number; h: number; title: string; origin: string; kind: string };
+export type CalcDetail = { w: number; h: number; title: string; origin: string; kind: string; use?: Use };
 
 const keyOf = (s: Size) => `${s.w}x${s.h}`;
 const sizes: Size[] = Array.from(new Map(products.map((p) => [`${p.w}x${p.h}`, { w: p.w, h: p.h }])).values()).sort(
   (a, b) => a.w * a.h - b.w * b.h || a.w - b.w,
 );
 const sizeLabel = (s: Size) => (s.w === 100 && s.h === 100 ? "1×1 متر" : `${s.w}×${s.h} سم`);
-// مقاسات الأرضية بدون المقاسات الحائطية فقط، ومقاسات الحيطان كما أوضحت الشركة.
-const floorSizes = sizes.filter((s) => !wallOnlySizeKeys.includes(keyOf(s)));
-const wallSizes = sizes.filter((s) => wallSizeKeys.includes(keyOf(s)));
+// مقاسات كل سطح تأتي من الأصناف نفسها حسب مكان تركيبها.
+const onFloor = (p: Product) => p.use !== "wall";
+const onWall = (p: Product) => p.use === "wall" || p.use === "both";
+const sizesFor = (fits: (p: Product) => boolean) => sizes.filter((s) => products.some((p) => keyOf(p) === keyOf(s) && fits(p)));
+const floorSizes = sizesFor(onFloor);
+const wallSizes = sizesFor(onWall);
 const isFloorKey = (k: string) => floorSizes.some((s) => keyOf(s) === k);
 const isWallKey = (k: string) => wallSizes.some((s) => keyOf(s) === k);
 const WALL_KIND = "سيراميك حائطي";
@@ -88,8 +91,9 @@ export function Calculator() {
       const d = (e as CustomEvent<CalcDetail>).detail;
       const picked = { title: d.title, origin: d.origin };
       const key = `${d.w}x${d.h}`;
-      // البلاط الحائطي والمقاسات التي تُركّب على الحيطان فقط تفتح حساب الحمام.
-      if (isWallKey(key) && (d.kind === WALL_KIND || !isFloorKey(key))) {
+      // البلاط الحائطي يفتح حساب الحمام، وما يُركّب للأرضيات يضبط مقاس الأرضية.
+      const toWall = d.use === "wall" || (d.use === "both" && d.kind === WALL_KIND);
+      if (toWall && isWallKey(key)) {
         changeMode("room");
         setWallKey(key);
         setWallRot(false);
