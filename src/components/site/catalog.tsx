@@ -15,7 +15,7 @@ const haystack = new Map(
   products.map((p) => [
     p.id,
     normalize(
-      [p.kind, p.size, originNames[p.origin], p.origin, ...(p.finishes ?? []), p.note ?? "", p.use ? useNames[p.use] : "", p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "", `${p.w} ${p.h}`, `${p.h} ${p.w}`].join(" "),
+      [p.kind, p.variant ?? "", p.size, originNames[p.origin], p.origin, ...(p.finishes ?? []), p.note ?? "", p.use ? useNames[p.use] : "", p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "", `${p.w} ${p.h}`, `${p.h} ${p.w}`].join(" "),
     ),
   ]),
 );
@@ -221,7 +221,7 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
       </div>
       <div className="pc-body">
         <span className={`pc-origin pc-origin-${p.origin}`}>{originNames[p.origin]}</span>
-        <h3>{p.kind}</h3>
+        <h3>{p.variant ? `${p.kind} ${p.variant}` : p.kind}</h3>
         <p className="pc-size">{p.size}</p>
         {p.outdoor || p.use ? <p className="pc-use">{p.outdoor ? outdoorLabel : useNames[p.use!]}</p> : null}
         {p.note ? <p className="pc-note">{p.note}</p> : null}

@@ -1165,6 +1165,9 @@ p {
 .pc-tile[data-look="kotto"] {
   background-image: url(assets/tex-kotto.jpg);
 }
+.pc-tile[data-look="wood"] {
+  background-image: url(assets/tex-wood.jpg);
+}
 .pc-tile[data-look="pool"] {
   background-image: url(assets/tex-pool.jpg);
 }
@@ -1239,6 +1242,10 @@ p {
 .pc-origin-turkey {
   background: #fbe8e8;
   color: #9b2c2c;
+}
+.pc-origin-egypt {
+  background: #f3eedc;
+  color: #6f5a12;
 }
 .pc h3 {
   font-size: 1.22rem;

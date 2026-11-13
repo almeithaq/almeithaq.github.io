@@ -216,7 +216,7 @@ export function Showroom() {
             <br />
             <span>من الأرضية</span>
           </h1>
-          <p className="sr-sub">جرّب الأرضيات على نفس الصالة، ثم اختر من أصنافنا الليبية والهندية والتركية في فرعينا بتاجوراء.</p>
+          <p className="sr-sub">جرّب الأرضيات على نفس الصالة، ثم اختر من أصنافنا الليبية والهندية والتركية والمصرية في فرعينا بتاجوراء.</p>
           <div className="sr-cta">
             <a href="#catalog" className="btn btn-light btn-lg" data-magnetic>
               تصفح الأصناف <IconArrow />

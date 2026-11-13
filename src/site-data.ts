@@ -19,11 +19,12 @@ export const socials: SocialLink[] = [
 export const facebookUrl = socials[0].url;
 
 // ---------- الأصناف ----------
-export type OriginId = "libya" | "india" | "turkey";
+export type OriginId = "libya" | "india" | "turkey" | "egypt";
 export const originNames: Record<OriginId, string> = {
   libya: "صناعة ليبية",
   india: "صناعة هندية",
   turkey: "صناعة تركية",
+  egypt: "صناعة مصرية",
 };
 
 export type Kind = "سيراميك" | "بورسلين" | "كوطو" | "سيراميك حائطي" | "سيراميك أحواض سباحة" | "رخام";
@@ -33,11 +34,12 @@ export type Finish = "مطفي" | "نص لمعة" | "لمعة" | "دبل لمع�
 export const finishOrder: Finish[] = ["مطفي", "نص لمعة", "لمعة", "دبل لمعة"];
 
 // شكل البلاطة في البطاقة (توضيحي فقط، والألوان والنقشات حسب المتوفر في الفرع)
-export type Look = "ivory" | "marble" | "kotto" | "pool" | "stone";
+export type Look = "ivory" | "marble" | "kotto" | "pool" | "stone" | "wood";
 
 export type Product = {
   id: string;
   kind: Kind;
+  variant?: string; // وصف يظهر بعد النوع، مثل «باركي»
   origin: OriginId;
   size: string; // كما يظهر للزائر
   w: number; // العرض بالسنتيمتر
@@ -83,11 +85,15 @@ export const products: Product[] = [
   { id: "in-porcelain-120x80", kind: "بورسلين", origin: "india", size: "120×80 سم", w: 120, h: 80, look: "stone" },
   { id: "in-kotto-50", kind: "كوطو", origin: "india", size: "50×50 سم", w: 50, h: 50, look: "kotto", use: "floor", outdoor: true },
   { id: "in-kotto-45", kind: "كوطو", origin: "india", size: "45×45 سم", w: 45, h: 45, look: "kotto", use: "floor", outdoor: true },
+  { id: "in-parquet-20x120", kind: "بورسلين", variant: "باركي", origin: "india", size: "20×120 سم", w: 20, h: 120, look: "wood", use: "both" },
   { id: "tr-porcelain-120x60", kind: "بورسلين", origin: "turkey", size: "120×60 سم", w: 120, h: 60, look: "marble", finishes: ["لمعة"], use: "both" },
   { id: "tr-marble-30x60", kind: "رخام", origin: "turkey", size: "30×60 سم", w: 30, h: 60, look: "marble", use: "floor" },
+  { id: "eg-parquet-20x120", kind: "بورسلين", variant: "باركي", origin: "egypt", size: "20×120 سم", w: 20, h: 120, look: "wood", use: "both" },
+  { id: "eg-ceramic-70", kind: "سيراميك", origin: "egypt", size: "70×70 سم", w: 70, h: 70, look: "ivory", use: "floor" },
+  { id: "eg-porcelain-80", kind: "بورسلين", origin: "egypt", size: "80×80 سم", w: 80, h: 80, look: "marble", use: "floor" },
 ];
 
-export const productTitle = (p: Product) => `${p.kind} ${p.size}`;
+export const productTitle = (p: Product) => `${p.kind}${p.variant ? ` ${p.variant}` : ""} ${p.size}`;
 
 // ---------- غرفة العرض التفاعلية (صور توضيحية لنفس الصالة) ----------
 export type FloorLook = { id: string; name: string; detail: string; image: string; swatch: string; kind: Kind };
@@ -179,5 +185,6 @@ export const marqueeItems = [
   "رخام تركي 30×60",
   "سيراميك أحواض سباحة",
   "بورسلين 120×80",
+  "بورسلين باركي 20×120",
   "مواد صحية",
 ];
