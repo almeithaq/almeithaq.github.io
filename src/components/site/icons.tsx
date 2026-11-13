@@ -134,3 +134,8 @@ export const IconYard = ({ className }: P) => (
     <path d="M12 13v7M5 16.5h14" />
   </svg>
 );
+export const IconHex = ({ className }: P) => (
+  <svg {...base} className={className}>
+    <path d="M12 2.5l8.2 4.75v9.5L12 21.5l-8.2-4.75v-9.5z" />
+  </svg>
+);

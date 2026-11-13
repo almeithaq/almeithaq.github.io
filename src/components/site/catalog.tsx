@@ -1,7 +1,21 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
-import { finishOrder, kinds, originNames, outdoorLabel, products, productTitle, useNames, type Finish, type Kind, type OriginId, type Product } from "../../site-data";
+import {
+  finishOrder,
+  isRect,
+  kinds,
+  originNames,
+  outdoorLabel,
+  products,
+  productTitle,
+  useNames,
+  type Finish,
+  type Kind,
+  type OriginId,
+  type Product,
+  type RectProduct,
+} from "../../site-data";
 import { normalize, prefersReducedMotion } from "./fx";
-import { IconCheck, IconPlus, IconSearch, IconClose, IconRotate } from "./icons";
+import { IconCheck, IconHex, IconPlus, IconSearch, IconClose, IconRotate } from "./icons";
 import { useRequest } from "./request";
 import type { CalcDetail } from "./calculator";
 
@@ -15,12 +29,51 @@ const haystack = new Map(
   products.map((p) => [
     p.id,
     normalize(
-      [p.kind, p.variant ?? "", p.size, originNames[p.origin], p.origin, ...(p.finishes ?? []), p.note ?? "", p.use ? useNames[p.use] : "", p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "", `${p.w} ${p.h}`, `${p.h} ${p.w}`].join(" "),
+      [
+        p.kind,
+        p.variant ?? "",
+        p.size ?? "",
+        originNames[p.origin],
+        p.origin,
+        ...(p.finishes ?? []),
+        p.note ?? "",
+        p.use ? useNames[p.use] : "",
+        p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "",
+        isRect(p) ? `${p.w} ${p.h} ${p.h} ${p.w}` : "",
+        p.keywords ?? "",
+      ].join(" "),
     ),
   ]),
 );
 
-export function openCalculator(p: Product) {
+// بند الصنف في قائمة الطلب (نفس المفتاح أينما أضيف، من البطاقة أو من خلية السداسي).
+export const requestItem = (p: Product, finish?: Finish) => ({
+  key: p.id,
+  title: productTitle(p),
+  detail: [originNames[p.origin], finish && p.finishes && p.finishes.length > 1 ? `لمعة: ${finish}` : "", p.note ?? ""].filter(Boolean).join("، "),
+});
+
+export function searchCatalog(query: string) {
+  window.dispatchEvent(new CustomEvent("am:search", { detail: query }));
+  document.getElementById("catalog")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
+}
+
+export function openHexIdeas() {
+  document.getElementById("hexagon")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
+}
+
+// وردة من سبع بلاطات سداسية لبطاقة الصنف: المنقوشتان مقصوصتان من صور الشركة، والبقية ألوان سادة ظاهرة في صورها.
+const HEX_FLOWER: { x: number; y: number; look: string }[] = [
+  { x: 0, y: 0, look: "a" },
+  { x: 0, y: -1, look: "black" },
+  { x: 1, y: -0.5, look: "white" },
+  { x: 1, y: 0.5, look: "b" },
+  { x: 0, y: 1, look: "grey" },
+  { x: -1, y: 0.5, look: "black" },
+  { x: -1, y: -0.5, look: "white" },
+];
+
+export function openCalculator(p: RectProduct) {
   const detail: CalcDetail = { id: p.id, w: p.w, h: p.h, title: productTitle(p), origin: originNames[p.origin], kind: p.kind, use: p.use, outdoor: !!p.outdoor };
   window.dispatchEvent(new CustomEvent("am:calc", { detail }));
   document.getElementById("calculator")?.scrollIntoView({ behavior: prefersReducedMotion() ? "auto" : "smooth" });
@@ -40,8 +93,18 @@ export function Catalog() {
       setFinish("all");
       setQuery("");
     };
+    const onSearch = (e: Event) => {
+      setQuery((e as CustomEvent<string>).detail);
+      setKind("all");
+      setOrigin("all");
+      setFinish("all");
+    };
     window.addEventListener("am:kind", onKind);
-    return () => window.removeEventListener("am:kind", onKind);
+    window.addEventListener("am:search", onSearch);
+    return () => {
+      window.removeEventListener("am:kind", onKind);
+      window.removeEventListener("am:search", onSearch);
+    };
   }, []);
 
   const tokens = normalize(query).split(" ").filter(Boolean);
@@ -213,16 +276,24 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
   return (
     <article className="pc" ref={cardRef}>
       <div className="pc-stage" ref={stageRef} onPointerMove={onMove} onPointerLeave={onLeave}>
-        <div className="pc-tiles" style={{ "--n": tiles } as CSSProperties}>
-          <span className="pc-tile" data-look={p.look} data-gloss={gloss} style={{ "--w": p.w, "--h": p.h } as CSSProperties} />
-          {p.decor ? <span className="pc-tile" data-look="decor" data-gloss="لمعة" style={{ "--w": p.w, "--h": p.h } as CSSProperties} /> : null}
-        </div>
-        <span className="pc-dim">{p.size}</span>
+        {p.shape === "hex" ? (
+          <div className="pc-hexes">
+            {HEX_FLOWER.map((t, i) => (
+              <span key={i} className="pc-hex" data-look={t.look} style={{ "--x": t.x, "--y": t.y } as CSSProperties} />
+            ))}
+          </div>
+        ) : (
+          <div className="pc-tiles" style={{ "--n": tiles } as CSSProperties}>
+            <span className="pc-tile" data-look={p.look} data-gloss={gloss} style={{ "--w": p.w, "--h": p.h } as CSSProperties} />
+            {p.decor ? <span className="pc-tile" data-look="decor" data-gloss="لمعة" style={{ "--w": p.w, "--h": p.h } as CSSProperties} /> : null}
+          </div>
+        )}
+        <span className="pc-dim">{p.shape === "hex" ? (p.size ?? "شكل سداسي") : p.size}</span>
       </div>
       <div className="pc-body">
         <span className={`pc-origin pc-origin-${p.origin}`}>{originNames[p.origin]}</span>
         <h3>{p.variant ? `${p.kind} ${p.variant}` : p.kind}</h3>
-        <p className="pc-size">{p.size}</p>
+        {p.size ? <p className="pc-size">{p.size}</p> : null}
         {p.outdoor || p.use ? <p className="pc-use">{p.outdoor ? outdoorLabel : useNames[p.use!]}</p> : null}
         {p.note ? <p className="pc-note">{p.note}</p> : null}
         {p.finishes && p.finishes.length > 1 ? (
@@ -240,19 +311,19 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
           <button
             type="button"
             className={`btn btn-sm ${added ? "btn-done" : "btn-primary"}`}
-            onClick={() =>
-              add({
-                key: p.id,
-                title: productTitle(p),
-                detail: [originNames[p.origin], finish && p.finishes && p.finishes.length > 1 ? `لمعة: ${finish}` : "", p.note ?? ""].filter(Boolean).join("، "),
-              })
-            }
+            onClick={() => add(requestItem(p, finish))}
           >
             {added ? <IconCheck /> : <IconPlus />} {added ? "في طلبك" : "أضف لطلبي"}
           </button>
-          <button type="button" className="btn btn-sm btn-ghost" onClick={() => openCalculator(p)}>
-            احسب الكمية
-          </button>
+          {isRect(p) ? (
+            <button type="button" className="btn btn-sm btn-ghost" onClick={() => openCalculator(p)}>
+              احسب الكمية
+            </button>
+          ) : p.shape === "hex" ? (
+            <button type="button" className="btn btn-sm btn-ghost" onClick={openHexIdeas}>
+              <IconHex /> شاهد الأفكار
+            </button>
+          ) : null}
         </div>
       </div>
     </article>

@@ -19,12 +19,13 @@ export const socials: SocialLink[] = [
 export const facebookUrl = socials[0].url;
 
 // ---------- الأصناف ----------
-export type OriginId = "libya" | "india" | "turkey" | "egypt";
+export type OriginId = "libya" | "india" | "turkey" | "egypt" | "tunisia";
 export const originNames: Record<OriginId, string> = {
   libya: "صناعة ليبية",
   india: "صناعة هندية",
   turkey: "صناعة تركية",
   egypt: "صناعة مصرية",
+  tunisia: "صناعة تونسية",
 };
 
 export type Kind = "سيراميك" | "بورسلين" | "كوطو" | "سيراميك حائطي" | "سيراميك أحواض سباحة" | "رخام";
@@ -34,23 +35,29 @@ export type Finish = "مطفي" | "نص لمعة" | "لمعة" | "دبل لمع�
 export const finishOrder: Finish[] = ["مطفي", "نص لمعة", "لمعة", "دبل لمعة"];
 
 // شكل البلاطة في البطاقة (توضيحي فقط، والألوان والنقشات حسب المتوفر في الفرع)
-export type Look = "ivory" | "marble" | "kotto" | "pool" | "stone" | "wood";
+export type Look = "ivory" | "marble" | "kotto" | "pool" | "stone" | "wood" | "hex";
 
 export type Product = {
   id: string;
   kind: Kind;
   variant?: string; // وصف يظهر بعد النوع، مثل «باركي»
   origin: OriginId;
-  size: string; // كما يظهر للزائر
-  w: number; // العرض بالسنتيمتر
-  h: number; // الطول بالسنتيمتر
+  shape?: "hex"; // بلاط سداسي: يُرسم في البطاقة كخلية نحل
+  size?: string; // كما يظهر للزائر (يُترك فارغاً إلى أن ترسل الشركة المقاس)
+  w?: number; // العرض بالسنتيمتر
+  h?: number; // الطول بالسنتيمتر
   look: Look;
   finishes?: Finish[];
   note?: string;
   decor?: boolean; // يُرسم معه بلاط ديكور
   use?: Use; // أين يُركَّب، كما أوضحت الشركة
   outdoor?: boolean; // يصلح للساحات الخارجية (أرضيات فقط)، كما أوضحت الشركة
+  keywords?: string; // كلمات إضافية يجدها البحث
 };
+
+// الأصناف المستطيلة المعروف مقاسها: هي التي تدخل حاسبة البلاط.
+export type RectProduct = Product & { size: string; w: number; h: number };
+export const isRect = (p: Product): p is RectProduct => p.shape !== "hex" && !!p.size && typeof p.w === "number" && typeof p.h === "number";
 
 // مكان التركيب كما أوضحت الشركة. الأصناف بدون قيمة تُركّب للأرضيات،
 // وحاسبة البلاط تبني منها مقاسات الأرضية ومقاسات الحيطان.
@@ -92,9 +99,24 @@ export const products: Product[] = [
   { id: "eg-parquet-20x120", kind: "بورسلين", variant: "باركي", origin: "egypt", size: "20×120 سم", w: 20, h: 120, look: "wood", use: "both" },
   { id: "eg-ceramic-70", kind: "سيراميك", origin: "egypt", size: "70×70 سم", w: 70, h: 70, look: "ivory", use: "floor" },
   { id: "eg-porcelain-80", kind: "بورسلين", origin: "egypt", size: "80×80 سم", w: 80, h: 80, look: "marble", use: "floor" },
+  // السداسي التونسي: للحيطان والأرضيات. المقاس لم يُرسل بعد، فلا يدخل الحاسبة حتى يُضاف.
+  {
+    id: "tn-hex",
+    kind: "سيراميك",
+    variant: "سداسي",
+    origin: "tunisia",
+    shape: "hex",
+    look: "hex",
+    use: "both",
+    note: "ألوان سادة ومنقوشة",
+    keywords: "سداسية سداسيات هكساجون خلية نحل تونسي تونس",
+  },
 ];
 
-export const productTitle = (p: Product) => `${p.kind}${p.variant ? ` ${p.variant}` : ""} ${p.size}`;
+export const rectProducts = products.filter(isRect);
+export const hexProduct = products.find((p) => p.shape === "hex");
+
+export const productTitle = (p: Product) => `${p.kind}${p.variant ? ` ${p.variant}` : ""}${p.size ? ` ${p.size}` : ""}`;
 
 // ---------- غرفة العرض التفاعلية (صور توضيحية لنفس الصالة) ----------
 export type FloorLook = { id: string; name: string; detail: string; image: string; swatch: string; kind: Kind };
@@ -168,13 +190,29 @@ export const smsHref = (phone: string, text: string) => `sms:+${intlNumber(phone
 // إحداثيات تاجوراء التقريبية لحساب وقت المغرب اليومي (توقيت ليبيا UTC+2)
 export const tajouraCoords = { lat: 32.882, lng: 13.35, utcOffset: 2 };
 
-export const gallery = [
+export type GalleryItem = { image: string; thumb?: string; w: number; h: number; caption: string; alt: string };
+
+export const gallery: GalleryItem[] = [
   { image: "assets/gal-kitchen.jpg", w: 900, h: 1200, caption: "مطبخ بجدار أزرق لامع", alt: "مطبخ أبيض بجدار من البلاط الأزرق" },
   { image: "assets/cat-porcelain.jpg", w: 1400, h: 1050, caption: "ألواح بورسلين بملمس الرخام", alt: "ألواح بورسلين كبيرة بيضاء وزرقاء في صالة عرض" },
   { image: "assets/gal-shower.jpg", w: 900, h: 1200, caption: "حمام بجدران بيضاء وتجويف أزرق", alt: "دش بجدران بيضاء وتجويف من الموزاييك الأزرق" },
   { image: "assets/cat-ceramic.jpg", w: 1400, h: 1050, caption: "سيراميك أبيض مع لمسة زرقاء", alt: "عينات بلاط سيراميك بالأبيض والرمادي والأزرق" },
   { image: "assets/gal-terrace.jpg", w: 900, h: 1200, caption: "مدخل خارجي ببلاط حجري", alt: "مدخل فيلا ببلاط خارجي رمادي وباب أزرق" },
   { image: "assets/cat-sanitary.jpg", w: 1400, h: 1050, caption: "حمام بطقم صحي أبيض", alt: "حمام حديث بطقم صحي أبيض وجدار أزرق" },
+];
+
+// أفكار السداسي التونسي: صور الشركة نفسها (بعد قص الشعار وأشرطة الأرقام). thumb هي النسخة المصغّرة داخل الخلية السداسية.
+export const hexGallery: GalleryItem[] = [
+  { image: "assets/hex-01.jpg", thumb: "assets/hex-01-t.jpg", w: 1600, h: 1329, caption: "جدار سداسي منقوش بالأبيض والأسود", alt: "حمام بجدار من السداسي المنقوش بالأبيض والأسود ومغسلة سوداء" },
+  { image: "assets/hex-02.jpg", thumb: "assets/hex-02-t.jpg", w: 1024, h: 1536, caption: "سداسي أبيض للحائط والأرضية", alt: "حمام صغير بسداسي أبيض على الحائط والأرضية ومغسلة معلقة" },
+  { image: "assets/hex-03.jpg", thumb: "assets/hex-03-t.jpg", w: 1024, h: 1536, caption: "أرضية مقهى بالأبيض والأسود", alt: "مقهى بأرضية سداسية بالأبيض والأسود وطاولات خشبية" },
+  { image: "assets/hex-04.jpg", thumb: "assets/hex-04-t.jpg", w: 778, h: 650, caption: "أبيض هادئ مع جدار منقوش", alt: "حمام بسداسي أبيض وجدار جانبي من السداسي المنقوش" },
+  { image: "assets/hex-05.jpg", thumb: "assets/hex-05-t.jpg", w: 1024, h: 1536, caption: "ساحة مسبح بدرجتين من البيج", alt: "ساحة حول مسبح بسداسي بدرجتين من البيج أمام بيت أبيض" },
+  { image: "assets/hex-06.jpg", thumb: "assets/hex-06-t.jpg", w: 800, h: 647, caption: "المنقوش ينعكس في المرآة", alt: "حمام بجدار رمادي ومرآة مضيئة تعكس السداسي المنقوش" },
+  { image: "assets/hex-07.jpg", thumb: "assets/hex-07-t.jpg", w: 1024, h: 1536, caption: "حمام بلونين دافئين", alt: "حمام بسداسي بيج وبني فاتح على الحائط والأرضية ومغسلة بيضاء" },
+  { image: "assets/hex-08.jpg", thumb: "assets/hex-08-t.jpg", w: 580, h: 572, caption: "منقوش بجانب سادة فاتح", alt: "جدار من السداسي المنقوش بجانب جدار سداسي فاتح بتجويف مضيء" },
+  { image: "assets/hex-09.jpg", thumb: "assets/hex-09-t.jpg", w: 1024, h: 820, caption: "ركن مقهى بأرضية داكنة وبيضاء", alt: "ركن مقهى بطاولات خشبية وأرضية سداسية داكنة وبيضاء" },
+  { image: "assets/hex-10.jpg", thumb: "assets/hex-10-t.jpg", w: 1152, h: 652, caption: "حمام كامل بالسداسي الفاتح", alt: "حمام بجدران من السداسي الفاتح ومرآة مضيئة ومغسلة سوداء" },
 ];
 
 export const marqueeItems = [
@@ -187,5 +225,6 @@ export const marqueeItems = [
   "سيراميك أحواض سباحة",
   "بورسلين 120×80",
   "بورسلين باركي 20×120",
+  "سيراميك سداسي تونسي",
   "مواد صحية",
 ];

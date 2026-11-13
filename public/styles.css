@@ -1204,6 +1204,50 @@ p {
   --gr: 26%;
   --gs: 0.58;
 }
+/* الصنف السداسي: وردة من سبع بلاطات */
+.pc-hexes {
+  --a: calc(21 * var(--u));
+  position: relative;
+  width: calc(var(--a) * 5.2);
+  height: calc(var(--a) * 5.4);
+  transform: rotateX(var(--rx, 24deg)) rotateY(var(--ry, -14deg));
+  transition: transform 0.55s var(--ease);
+  filter: drop-shadow(0 2px 0 #c9d3df) drop-shadow(0 16px 14px rgba(11, 31, 58, 0.3));
+}
+.pc:hover .pc-hexes {
+  transition-duration: 0.15s;
+}
+.pc-hex {
+  position: absolute;
+  left: calc(50% + (var(--x) * 1.56 - 1) * var(--a));
+  top: calc(50% + (var(--y) * 1.8 - 0.866) * var(--a));
+  width: calc(var(--a) * 2);
+  height: calc(var(--a) * 1.732);
+  clip-path: polygon(25% 0, 75% 0, 100% 50%, 75% 100%, 25% 100%, 0 50%);
+  background: #f4f4f1 center / 100% 100% no-repeat;
+}
+.pc-hex[data-look="white"] {
+  background-image: linear-gradient(150deg, #fdfdfb, #e9e8e3);
+}
+.pc-hex[data-look="grey"] {
+  background-image: linear-gradient(150deg, #dcdad3, #c3c1b9);
+}
+.pc-hex[data-look="black"] {
+  background-image: linear-gradient(150deg, #303034, #131315);
+}
+.pc-hex[data-look="a"] {
+  background-image: url(assets/tex-hex-a.jpg);
+}
+.pc-hex[data-look="b"] {
+  background-image: url(assets/tex-hex-b.jpg);
+}
+.pc-hex::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--gx, 30%) var(--gy, 22%), rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 58%);
+  mix-blend-mode: screen;
+}
 .pc-dim {
   position: absolute;
   bottom: 0.6rem;
@@ -1246,6 +1290,10 @@ p {
 .pc-origin-egypt {
   background: #f3eedc;
   color: #6f5a12;
+}
+.pc-origin-tunisia {
+  background: #efe9f8;
+  color: #58388f;
 }
 .pc h3 {
   font-size: 1.22rem;
@@ -2418,6 +2466,7 @@ input[type="range"] {
 /* ---------- المعرض ---------- */
 .sec-gal {
   background: #fff;
+  padding-bottom: 0;
 }
 .gal-head {
   display: flex;
@@ -2537,6 +2586,298 @@ input[type="range"] {
   .lb-next {
     top: auto;
     bottom: 1rem;
+  }
+}
+
+/* ---------- خلية السداسي ---------- */
+.hive-band {
+  position: relative;
+  margin-top: clamp(3.5rem, 7vw, 5.5rem);
+  padding-block: clamp(3.5rem, 7vw, 5.5rem) clamp(4rem, 8vw, 6rem);
+  background-color: var(--navy);
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 34.64 60' preserveAspectRatio='none'%3E%3Cpath d='M17.32 0L34.64 10V30L17.32 40L0 30V10ZM17.32 40V60' fill='none' stroke='%23a9c8ee' stroke-opacity='.1' stroke-width='.7'/%3E%3C/svg%3E"),
+    radial-gradient(80% 55% at 50% 0%, rgba(40, 90, 150, 0.6), rgba(40, 90, 150, 0) 72%);
+  background-size:
+    52px 90px,
+    auto;
+  color: #fff;
+}
+.hive-head {
+  max-width: 760px;
+  margin-bottom: clamp(1.8rem, 3.4vw, 2.6rem);
+}
+.hive-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.25rem 0.85rem;
+  border-radius: 999px;
+  background: rgba(169, 200, 238, 0.16);
+  border: 1px solid rgba(169, 200, 238, 0.32);
+  color: var(--glow);
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.hive-kicker svg {
+  width: 16px;
+  height: 16px;
+}
+.hive-title {
+  margin-top: 0.8rem;
+  font-size: clamp(2.1rem, 4.8vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.hive-title span {
+  color: var(--glow);
+}
+.hive-lead {
+  margin-top: 0.7rem;
+  max-width: 58ch;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 1.07rem;
+}
+.hive-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.2rem;
+}
+.hive-actions .btn svg {
+  width: 1em;
+  height: 1em;
+}
+.hive-note {
+  margin-top: 1.5rem;
+  font-size: 0.84rem;
+  color: rgba(255, 255, 255, 0.62);
+}
+/* شبكة خلايا النحل: الخلايا تلتف تلقائياً، والعنصر العائم يزيح كل صف ثانٍ نصف خلية.
+   عدد الصفوف يحسبه المكوّن من عدد الخلايا (--rows-wide و --rows-narrow) ليأخذ العنصر العائم ارتفاعها بالضبط. */
+.hive {
+  --cols: 5.5;
+  --rows: var(--rows-wide, 3);
+  --gap: 10px;
+  --hw: min(1240px, 100vw - 2.5rem - 18px);
+  --pitch: calc((var(--hw) - 2px) / var(--cols));
+  --s: calc(var(--pitch) - var(--gap));
+  --f: calc(var(--s) * 1.732 + var(--gap) * 2);
+  display: flow-root;
+  padding-bottom: calc(var(--s) * 0.2887);
+  font-size: 0;
+}
+@supports (width: 1cqw) {
+  .hive-box {
+    container-type: inline-size;
+  }
+  .hive {
+    --hw: 100cqw;
+  }
+}
+.hive::before {
+  content: "";
+  float: right;
+  width: calc(var(--pitch) / 2);
+  height: calc(var(--f) * var(--rows) / 2);
+  /* شكل العنصر العائم «مشط»: سنّ رفيع في منتصف كل صف ثانٍ (f = ارتفاع صفين) يزيح ذلك الصف نصف خلية.
+     مضلّع وليس تدرجاً لونياً، لأن كروم يخطئ في أشكال التدرج مع العناصر العائمة يميناً. يكفي لاثني عشر صفاً. */
+  shape-outside: polygon(
+    100% 0,
+    100% calc(var(--f) * 0.75 - 2px),
+    0 calc(var(--f) * 0.75 - 2px),
+    0 calc(var(--f) * 0.75 + 2px),
+    100% calc(var(--f) * 0.75 + 2px),
+    100% calc(var(--f) * 1.75 - 2px),
+    0 calc(var(--f) * 1.75 - 2px),
+    0 calc(var(--f) * 1.75 + 2px),
+    100% calc(var(--f) * 1.75 + 2px),
+    100% calc(var(--f) * 2.75 - 2px),
+    0 calc(var(--f) * 2.75 - 2px),
+    0 calc(var(--f) * 2.75 + 2px),
+    100% calc(var(--f) * 2.75 + 2px),
+    100% calc(var(--f) * 3.75 - 2px),
+    0 calc(var(--f) * 3.75 - 2px),
+    0 calc(var(--f) * 3.75 + 2px),
+    100% calc(var(--f) * 3.75 + 2px),
+    100% calc(var(--f) * 4.75 - 2px),
+    0 calc(var(--f) * 4.75 - 2px),
+    0 calc(var(--f) * 4.75 + 2px),
+    100% calc(var(--f) * 4.75 + 2px),
+    100% calc(var(--f) * 5.75 - 2px),
+    0 calc(var(--f) * 5.75 - 2px),
+    0 calc(var(--f) * 5.75 + 2px),
+    100% calc(var(--f) * 5.75 + 2px)
+  );
+}
+.hx {
+  position: relative;
+  display: inline-grid;
+  place-content: center;
+  justify-items: center;
+  vertical-align: top;
+  width: var(--s);
+  height: calc(var(--s) * 1.1547);
+  margin: calc(var(--gap) / 2);
+  margin-bottom: calc(var(--gap) / 2 - var(--s) * 0.2887);
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  background: #16335a;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1rem;
+  text-align: center;
+  clip-path: polygon(0% 25%, 0% 75%, 50% 100%, 100% 75%, 100% 25%, 50% 0%);
+  transition:
+    transform 0.45s var(--ease),
+    filter 0.35s,
+    background 0.3s,
+    color 0.3s;
+}
+/* إطار سداسي يظهر عند المرور أو التركيز (الحدود العادية يقصّها شكل الخلية) */
+.hx::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--glow);
+  clip-path: polygon(
+    evenodd,
+    0% 25%,
+    0% 75%,
+    50% 100%,
+    100% 75%,
+    100% 25%,
+    50% 0%,
+    0% 25%,
+    4.5% 27.25%,
+    50% 4.5%,
+    95.5% 27.25%,
+    95.5% 72.75%,
+    50% 95.5%,
+    4.5% 72.75%,
+    4.5% 27.25%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+}
+button.hx {
+  cursor: pointer;
+}
+button.hx:focus-visible {
+  outline: none;
+}
+button.hx:focus-visible::after {
+  opacity: 1;
+  background: #fff;
+}
+button.hx:active {
+  transform: scale(0.96);
+}
+.hx-photo {
+  cursor: zoom-in;
+}
+.hx-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease);
+}
+@media (hover: hover) {
+  button.hx:hover {
+    z-index: 2;
+    transform: scale(1.06);
+  }
+  button.hx:hover::after {
+    opacity: 1;
+  }
+  .hx-photo:hover img {
+    transform: scale(1.12);
+  }
+  .hive:has(button.hx:hover) .hx:not(:hover) {
+    filter: brightness(0.84);
+  }
+}
+.hx-logo {
+  gap: calc(var(--s) * 0.06);
+  background: linear-gradient(160deg, #3a78bf, var(--blue) 55%, var(--blue-2));
+  color: #fff;
+}
+.hx-logo .mark {
+  width: calc(var(--s) * 0.42);
+}
+.hx-logo .word {
+  width: calc(var(--s) * 0.56);
+}
+.hx-fact {
+  line-height: 1.25;
+}
+.hx-fact small {
+  font-size: clamp(0.75rem, calc(var(--s) * 0.085), 1rem);
+  font-weight: 500;
+  opacity: 0.78;
+}
+.hx-fact strong {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(0.95rem, calc(var(--s) * 0.14), 1.8rem);
+}
+.hx-white {
+  background: linear-gradient(150deg, #fff 45%, #e6eef8);
+  color: var(--ink);
+}
+.hx-sky {
+  background: linear-gradient(150deg, #f1f6fd, var(--sky) 60%, #cfe0f5);
+  color: var(--blue-2);
+}
+.hx-glow {
+  background: linear-gradient(150deg, #c3d9f4, var(--glow) 60%, #8fb5e4);
+  color: var(--navy);
+}
+.hx-cta {
+  gap: calc(var(--s) * 0.03);
+  background: #fff;
+  color: var(--blue);
+}
+.hx-cta svg {
+  width: clamp(22px, calc(var(--s) * 0.2), 40px);
+  height: clamp(22px, calc(var(--s) * 0.2), 40px);
+}
+.hx-cta strong {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(0.84rem, calc(var(--s) * 0.105), 1.3rem);
+}
+.hx-cta.is-added {
+  background: #e3f3e8;
+  color: #1b6a39;
+}
+@media (hover: hover) {
+  .hx-cta:not(.is-added):hover {
+    background: var(--blue);
+    color: #fff;
+  }
+}
+/* دخول الخلايا واحدة بعد الأخرى كأنها بلاطات تُركَّب */
+.js .hive.is-armed {
+  opacity: 1;
+  transform: none;
+  transition: none;
+}
+.js .hive.is-armed:not(.is-in) .hx {
+  opacity: 0;
+}
+.js .hive.is-armed.is-in .hx {
+  animation: hx-in 0.75s cubic-bezier(0.2, 0.9, 0.25, 1.15) calc(var(--i) * 55ms) backwards;
+}
+@media (max-width: 700px) {
+  .hive {
+    --cols: 3;
+    --rows: var(--rows-narrow, 6);
+    --gap: 8px;
   }
 }
 
@@ -3209,6 +3550,12 @@ input[type="range"] {
     box-shadow: 0 0 0 7px rgba(34, 163, 90, 0);
   }
 }
+@keyframes hx-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4) rotate(-22deg);
+  }
+}
 @keyframes num-in {
   from {
     opacity: 0.2;
@@ -3260,6 +3607,9 @@ input[type="range"] {
   .rv-hint,
   .rv-cap {
     transition-delay: 0s !important;
+  }
+  .hx {
+    animation-delay: 0s !important;
   }
   [data-parallax] > img {
     transform: scale(1.12);

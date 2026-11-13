@@ -1,5 +1,6 @@
 import { memo, useCallback, useEffect, useId, useMemo, useRef, useState, type CSSProperties, type PointerEvent, type ReactNode } from "react";
-import { originNames, products, productTitle, type Product, type Use } from "../../site-data";
+// الحاسبة تعمل على الأصناف المستطيلة المعروف مقاسها فقط.
+import { originNames, rectProducts as products, productTitle, type RectProduct as Product, type Use } from "../../site-data";
 import { formatNumber, parseNumber, prefersReducedMotion } from "./fx";
 import { IconCube, IconFloor, IconNet, IconPlus, IconRotate, IconYard } from "./icons";
 import { useRequest } from "./request";
