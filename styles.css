@@ -1795,13 +1795,20 @@ input[type="range"] {
   animation: plan-in 0.6s var(--ease);
 }
 .rv-wall {
+  overflow: hidden;
   transform-origin: 50% 100%;
-  transition: opacity 0.35s;
+}
+.rv-wall-in {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 .rv.is-anim .rv-wall {
   transition:
     transform 0.95s var(--ease) calc(var(--i) * 80ms + 0.12s),
-    opacity 0.5s;
+    height 0.6s var(--ease),
+    top 0.6s var(--ease);
 }
 .rv.is-dragging .rv-wall {
   transition: none;
@@ -1809,6 +1816,7 @@ input[type="range"] {
 .rv-wall::before {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 0;
   background: rgba(11, 31, 58, var(--shade, 0));
   opacity: 0;
@@ -1821,6 +1829,7 @@ input[type="range"] {
 .rv-wall::after {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 0;
   background: linear-gradient(to top, rgba(11, 31, 58, 0.34), rgba(11, 31, 58, 0) 55%);
   opacity: 0;
@@ -1829,6 +1838,25 @@ input[type="range"] {
 }
 .rv[data-shape="3d"] .rv-wall::after {
   opacity: 1;
+}
+.rv-cap {
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(11, 31, 58, 0.18);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.rv[data-shape="3d"] .rv-cap {
+  opacity: 1;
+}
+.rv.is-dragging .rv-cap {
+  transition: none;
 }
 .rv-shadow {
   transform: translateZ(-2px) scale(1.3);
@@ -1841,6 +1869,7 @@ input[type="range"] {
 }
 .rv-label {
   position: absolute;
+  z-index: 2;
   left: 50%;
   top: 50%;
   padding: 0.16rem 0.55rem;
@@ -1908,7 +1937,7 @@ input[type="range"] {
   fill: #fbfdff;
 }
 .rv-svg-wall .plan-grout {
-  stroke: #7da5d6;
+  stroke: #6a94ca;
 }
 .rv-look-kotto .plan-tile {
   fill: #d6d0c7;
@@ -1955,7 +1984,7 @@ input[type="range"] {
 }
 .lg-wall {
   background: #fbfdff;
-  box-shadow: inset 0 0 0 2px #7da5d6;
+  box-shadow: inset 0 0 0 2px #6a94ca;
 }
 .lg-cut {
   background: repeating-linear-gradient(45deg, #ffe8d4 0 3px, #dd8a3e 3px 5px);
@@ -3228,7 +3257,8 @@ input[type="range"] {
   }
   .rv-wall,
   .rv-label,
-  .rv-hint {
+  .rv-hint,
+  .rv-cap {
     transition-delay: 0s !important;
   }
   [data-parallax] > img {
