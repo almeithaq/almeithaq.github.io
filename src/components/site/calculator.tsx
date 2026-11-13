@@ -39,6 +39,7 @@ const MAX_H = 10;
 const EPS = 1e-6;
 const TILT = 52;
 const START_PHI = -40;
+const CUTAWAY = 0.7; // ما يُقصّ من أعلى الحائط القريب من الزائر في المجسّم
 
 type Layout = { fullCols: number; fullRows: number; total: number; cut: number };
 
@@ -736,11 +737,14 @@ function RoomView({ floor, walls, view, look }: { floor: FloorDraw; walls: WallD
     { id: "w", len: floor.wc, psi: -90, hx: -Lp / 2, hy: 0 },
   ];
 
-  // الحيطان القريبة من الزائر تصبح شفافة حتى يرى داخل الغرفة، والحائط المقابل للضوء أغمق قليلاً.
-  const wallOpacity = (psi: number) => {
+  // الحيطان القريبة من الزائر تُقصّ إلى ارتفاع منخفض (بدل أن تختفي) فيبقى بلاطها ظاهراً ويُرى داخل الغرفة.
+  // والحائط المقابل للضوء أغمق قليلاً.
+  // يُقصَّر الحائط نفسه ويبقى رسم بلاطه مثبتاً على الأرض (أثبت في المتصفحات من clip-path).
+  const wallShown = (psi: number) => {
     if (shape !== "3d") return 1;
     const c = Math.cos(((psi + phi) * Math.PI) / 180);
-    return c >= 0.12 ? 1 : c <= -0.22 ? 0.18 : 0.18 + ((c + 0.22) / 0.34) * 0.82;
+    const f = c >= 0.12 ? 0 : c <= -0.22 ? 1 : (0.12 - c) / 0.34;
+    return 1 - f * CUTAWAY;
   };
   const wallShade = (psi: number) => Math.max(0, Math.sin(((psi + phi) * Math.PI) / 180)) * 0.2;
 
@@ -795,28 +799,33 @@ function RoomView({ floor, walls, view, look }: { floor: FloorDraw; walls: WallD
           <TileFace len={floor.lc} hgt={floor.wc} tw={floor.tw} th={floor.th} u={u} variant="floor" look={look} />
           <span className="rv-label">{`${cmText(floor.lc)} × ${cmText(floor.wc)} م`}</span>
         </div>
-        {wallDefs.map((w, i) => (
-          <div
-            key={w.id}
-            className="rv-face rv-wall"
-            style={
-              {
-                left: -(w.len * k0) / 2,
-                top: -Hp,
-                width: w.len * k0,
-                height: Hp,
-                opacity: wallOpacity(w.psi),
-                "--shade": wallShade(w.psi).toFixed(3),
-                transform: `translate(${w.hx}px, ${w.hy}px) rotate(${w.psi}deg) rotateX(${theta}deg) scaleY(${sy})`,
-                "--i": i,
-                "--lr": `${-w.psi}deg`,
-              } as CSSProperties
-            }
-          >
-            {wallsDraw ? <TileFace len={w.len} hgt={wallsDraw.hc} tw={wallsDraw.tw} th={wallsDraw.th} u={u} variant="wall" /> : null}
-            {wallsDraw ? <span className="rv-label">{`${cmText(w.len)} × ${cmText(wallsDraw.hc)} م`}</span> : null}
-          </div>
-        ))}
+        {wallDefs.map((w, i) => {
+          const shownH = Hp * wallShown(w.psi);
+          return (
+            <div
+              key={w.id}
+              className="rv-face rv-wall"
+              style={
+                {
+                  left: -(w.len * k0) / 2,
+                  top: -shownH,
+                  width: w.len * k0,
+                  height: shownH,
+                  "--shade": wallShade(w.psi).toFixed(3),
+                  transform: `translate(${w.hx}px, ${w.hy}px) rotate(${w.psi}deg) rotateX(${theta}deg) scaleY(${sy})`,
+                  "--i": i,
+                  "--lr": `${-w.psi}deg`,
+                } as CSSProperties
+              }
+            >
+              <div className="rv-wall-in" style={{ height: Hp }}>
+                {wallsDraw ? <TileFace len={w.len} hgt={wallsDraw.hc} tw={wallsDraw.tw} th={wallsDraw.th} u={u} variant="wall" /> : null}
+              </div>
+              {wallsDraw ? <span className="rv-label">{`${cmText(w.len)} × ${cmText(wallsDraw.hc)} م`}</span> : null}
+              <span className="rv-cap" />
+            </div>
+          );
+        })}
       </div>
       <span className="rv-hint">
         <IconRotate /> اسحب لتدوير المجسّم
