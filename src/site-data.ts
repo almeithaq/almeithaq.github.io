@@ -319,7 +319,7 @@ export const designById = (id: string) => designs.find((d) => d.id === id);
 export const setById = (id: string) => designSets.find((s) => s.id === id);
 export const setForProduct = (productId: string) => designSets.find((s) => s.productId === productId);
 export const designsOf = (setId: string) => designs.filter((d) => d.setId === setId);
-export const designLabel = (d: Design) => (d.code ? `كود ${d.code}` : `تصميم ${d.n}`);
+export const designLabel = (d: Design) => d.code ?? `تصميم ${d.n}`;
 
 // ---------- تصاميم البيوت والحمامات ----------
 // صور توضيحية صُمّمت بالحاسوب: كل صورة تُظهر أحد تصاميمنا الحقيقية بعد التركيب.
