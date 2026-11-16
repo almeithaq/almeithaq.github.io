@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent } from "react";
 import {
+  designsOf,
   finishOrder,
+  setForProduct,
   isRect,
   kinds,
   originNames,
@@ -16,6 +18,7 @@ import {
 } from "../../site-data";
 import { normalize, prefersReducedMotion } from "./fx";
 import { IconCheck, IconHex, IconPlus, IconSearch, IconClose, IconRotate } from "./icons";
+import { openViewer, productSlides } from "./designs";
 import { useRequest } from "./request";
 import type { CalcDetail } from "./calculator";
 
@@ -41,6 +44,7 @@ const haystack = new Map(
         p.outdoor ? `${outdoorLabel} خارجي حوش ساحه` : "",
         isRect(p) ? `${p.w} ${p.h} ${p.h} ${p.w}` : "",
         p.keywords ?? "",
+        setForProduct(p.id) ? "صور حقيقيه" : "",
       ].join(" "),
     ),
   ]),
@@ -230,7 +234,7 @@ export function Catalog() {
             ))}
           </div>
         )}
-        <p className="muted small cat-note">الأشكال توضيحية للمقاس واللمعة، والألوان والنقشات المتوفرة تُعرض في الفروع.</p>
+        <p className="muted small cat-note">البطاقات التي عليها «صورة حقيقية» تعرض تصاميم مصوّرة في المعرض. بقية الأشكال توضيحية للمقاس واللمعة، والألوان والنقشات المتوفرة تُعرض في الفروع.</p>
       </div>
     </section>
   );
@@ -250,7 +254,12 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
   const [finish, setFinish] = useState<Finish | undefined>(p.finishes?.[0]);
   const stageRef = useRef<HTMLDivElement>(null);
   const added = has(p.id);
-  const tiles = p.decor ? 2 : 1;
+  const set = setForProduct(p.id);
+  const photos = set ? designsOf(set.id) : [];
+  // صورة حقيقية على البلاطة المرسومة، ولكل تصميم ديكور ضمن الصورة نفسها.
+  const photo = photos[0]?.thumb;
+  const tiles = p.decor && !photo ? 2 : 1;
+  const showPhotos = () => set && openViewer(productSlides(set.id), 0, productTitle(p));
   const gloss = finish ?? (p.look === "marble" ? "لمعة" : p.look === "pool" ? "لمعة" : "مطفي");
 
   const onMove = (e: PointerEvent<HTMLDivElement>) => {
@@ -284,10 +293,20 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
           </div>
         ) : (
           <div className="pc-tiles" style={{ "--n": tiles } as CSSProperties}>
-            <span className="pc-tile" data-look={p.look} data-gloss={gloss} style={{ "--w": p.w, "--h": p.h } as CSSProperties} />
-            {p.decor ? <span className="pc-tile" data-look="decor" data-gloss="لمعة" style={{ "--w": p.w, "--h": p.h } as CSSProperties} /> : null}
+            <span
+              className={`pc-tile ${photo ? "has-photo" : ""}`}
+              data-look={p.look}
+              data-gloss={gloss}
+              style={{ "--w": p.w, "--h": p.h, ...(photo ? { backgroundImage: `url(${photo})` } : {}) } as CSSProperties}
+            />
+            {p.decor && !photo ? <span className="pc-tile" data-look="decor" data-gloss="لمعة" style={{ "--w": p.w, "--h": p.h } as CSSProperties} /> : null}
           </div>
         )}
+        {photos.length ? (
+          <button type="button" className="pc-photos" onClick={showPhotos}>
+            {photos.length} صورة حقيقية
+          </button>
+        ) : null}
         <span className="pc-dim">{p.shape === "hex" ? (p.size ?? "شكل سداسي") : p.size}</span>
       </div>
       <div className="pc-body">

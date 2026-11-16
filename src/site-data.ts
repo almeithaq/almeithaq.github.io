@@ -115,6 +115,7 @@ export const products: Product[] = [
 
 export const rectProducts = products.filter(isRect);
 export const hexProduct = products.find((p) => p.shape === "hex");
+export const productById = (id: string) => products.find((p) => p.id === id);
 
 export const productTitle = (p: Product) => `${p.kind}${p.variant ? ` ${p.variant}` : ""}${p.size ? ` ${p.size}` : ""}`;
 
@@ -228,3 +229,98 @@ export const marqueeItems = [
   "سيراميك سداسي تونسي",
   "مواد صحية",
 ];
+
+// ---------- التصاميم الحقيقية ----------
+// صور حقيقية أرسلها المالك (الأصناف نفسها متوفرة عند الميثاق كما أكد المالك). عُدّلت زاويتها فقط لتظهر البلاطة مستقيمة، ولم تُغيَّر ألوانها.
+// وصف اللون مأخوذ من الصورة نفسها ليساعد على التمييز بين التصاميم.
+export type SetShape = "slab" | "square" | "wall";
+export type DesignSet = {
+  id: string;
+  productId: string;
+  label: string; // اسم التبويب
+  shape: SetShape; // نسبة الصورة: لوح 60×120، مربع، أو حائطي مع ديكوره
+  note?: string;
+  looks: string[]; // وصف كل تصميم بترتيب صوره
+};
+export const designSets: DesignSet[] = [
+  {
+    id: "p120",
+    productId: "in-porcelain-120x60",
+    label: "بورسلين هندي 120×60",
+    shape: "slab",
+    looks: [
+      "كريمي بعروق ذهبية",
+      "أبيض بعروق سوداء رفيعة",
+      "رمادي فاتح بعروق داكنة",
+      "رمادي رخامي منقّط",
+      "بيج فاتح",
+      "رمادي متوسط",
+      "رمادي فاتح بعروق رفيعة",
+      "أبيض بعروق رمادية",
+      "رمادي فاتح ناعم",
+      "بني داكن بعروق فاتحة",
+      "رمادي داكن بعروق",
+      "بني فاتح",
+    ],
+  },
+  {
+    id: "p80",
+    productId: "in-porcelain-80",
+    label: "بورسلين هندي 80×80",
+    shape: "square",
+    looks: ["رمادي بعروق بيضاء", "رمادي فاتح حجري", "رمادي حجري بعروق", "بيج إسمنتي", "بيج رمادي فاتح", "رمادي فاتح سادة"],
+  },
+  {
+    id: "c60",
+    productId: "ly-ceramic-60",
+    label: "سيراميك ليبي 60×60",
+    shape: "square",
+    looks: ["رمادي فاتح بعروق ناعمة", "رمادي فاتح بتموّجات", "بيج كريمي", "بيج بعروق", "رمادي حجري", "أبيض بعروق بيج"],
+  },
+  {
+    id: "w30",
+    productId: "ly-wall-30x60",
+    label: "حائطي ليبي 30×60",
+    shape: "wall",
+    note: "كل صورة تعرض البلاطة السادة ومعها الديكور المطابق لها.",
+    looks: ["أبيض رخامي بعروق سوداء مع ديكور هندسي بارز", "رمادي مع ديكور مربعات بارزة", "تيرازو رمادي مع ديكور مثلثات", "رمادي فاتح مع ديكور خطوط بارزة"],
+  },
+];
+
+export type Design = {
+  id: string;
+  setId: string;
+  productId: string;
+  n: number; // رقم التصميم داخل مجموعته
+  look: string;
+  image: string; // الصورة الكبيرة
+  thumb: string; // صورة البطاقة
+  tiny: string; // صورة صغيرة لجدار الواجهة والقوائم
+};
+export const designs: Design[] = designSets.flatMap((s) =>
+  s.looks.map((look, i) => {
+    const id = `${s.id}-${String(i + 1).padStart(2, "0")}`;
+    return { id, setId: s.id, productId: s.productId, n: i + 1, look, image: `designs/${id}.jpg`, thumb: `designs/${id}-t.jpg`, tiny: `designs/${id}-w.jpg` };
+  }),
+);
+export const designById = (id: string) => designs.find((d) => d.id === id);
+export const setById = (id: string) => designSets.find((s) => s.id === id);
+export const setForProduct = (productId: string) => designSets.find((s) => s.productId === productId);
+export const designsOf = (setId: string) => designs.filter((d) => d.setId === setId);
+export const designLabel = (d: Design) => `تصميم ${d.n}`;
+
+// ---------- تصاميم البيوت والحمامات ----------
+// صور توضيحية صُمّمت بالحاسوب: كل صورة تُظهر أحد تصاميمنا الحقيقية بعد التركيب.
+export type SceneKind = "floor" | "bath";
+export const sceneKinds: Record<SceneKind, string> = { floor: "أرضيات البيت", bath: "الحمامات" };
+export type Scene = { id: string; kind: SceneKind; title: string; designId: string; surface: string };
+export const scenes: Scene[] = [
+  { id: "living", kind: "floor", title: "صالة الجلوس", designId: "p120-01", surface: "الأرضية" },
+  { id: "bath1", kind: "bath", title: "حمّام بالأبيض الرخامي", designId: "w30-01", surface: "الحيطان" },
+  { id: "majlis", kind: "floor", title: "المجلس", designId: "p120-02", surface: "الأرضية" },
+  { id: "bedroom", kind: "floor", title: "غرفة النوم", designId: "p80-01", surface: "الأرضية" },
+  { id: "bath2", kind: "bath", title: "حمّام بالتيرازو", designId: "w30-03", surface: "الحيطان" },
+  { id: "kitchen", kind: "floor", title: "المطبخ", designId: "c60-03", surface: "الأرضية" },
+  { id: "bath3", kind: "bath", title: "حمّام بالرمادي الفاتح", designId: "w30-04", surface: "الحيطان" },
+];
+export const sceneImage = (s: Scene) => ({ large: `looks/${s.id}.jpg`, medium: `looks/${s.id}-m.jpg`, thumb: `looks/${s.id}-t.jpg` });

@@ -23,6 +23,7 @@ import { IconArrow, IconChat, IconChevron, IconClock, IconClose, IconCube, IconL
 import { useRequest } from "./request";
 
 const navLinks = [
+  { href: "#designs", id: "designs", label: "التصاميم" },
   { href: "#catalog", id: "catalog", label: "الأصناف" },
   { href: "#calculator", id: "calculator", label: "حاسبة البلاط" },
   { href: "#finishes", id: "finishes", label: "اللمعات" },
