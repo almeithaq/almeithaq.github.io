@@ -287,6 +287,14 @@ export const designSets: DesignSet[] = [
     looks: ["ترافنتينو بيج فاتح"],
   },
   {
+    id: "ly120m",
+    productId: "ly-porcelain-120x60",
+    label: "بورسلين ليبي 120×60",
+    shape: "slab",
+    looks: ["أبيض بعروق رمادية عريضة", "أبيض بعروق رمادية ناعمة"],
+    codes: ["206", "289"],
+  },
+  {
     id: "p80",
     productId: "in-porcelain-80",
     label: "بورسلين هندي 80×80",
