@@ -304,7 +304,7 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
         )}
         {photos.length ? (
           <button type="button" className="pc-photos" onClick={showPhotos}>
-            {photos.length} صورة حقيقية
+            {photos.length === 1 ? "صورة حقيقية" : photos.length === 2 ? "صورتان حقيقيتان" : photos.length <= 10 ? `${photos.length} صور حقيقية` : `${photos.length} صورة حقيقية`}
           </button>
         ) : null}
         <span className="pc-dim">{p.shape === "hex" ? (p.size ?? "شكل سداسي") : p.size}</span>
