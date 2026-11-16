@@ -295,6 +295,14 @@ export const designSets: DesignSet[] = [
     codes: ["206", "289"],
   },
   {
+    id: "ly120tz",
+    productId: "ly-porcelain-120x60",
+    label: "تيرازو ليبي 120×60",
+    shape: "slab",
+    prefix: "تيرازو",
+    looks: ["رمادي فاتح بحبيبات سوداء وبنية وبيضاء"],
+  },
+  {
     id: "p80",
     productId: "in-porcelain-80",
     label: "بورسلين هندي 80×80",
