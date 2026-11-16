@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   designById,
   designLabel,
-  designsOf,
+  designsForProduct,
   isRect,
   originNames,
   productById,
@@ -31,17 +31,16 @@ export const designRequestItem = (d: Design) => {
 // شريحة في العارض: صورة كبيرة، ومعها التصميم الحقيقي المرتبط بها.
 export type Slide = { image: string; thumb: string; alt: string; title: string; note?: string; design: Design; inset?: boolean; shape?: string };
 
-export const productSlides = (setId: string): Slide[] => {
-  const set = setById(setId);
-  const p = set ? productById(set.productId) : undefined;
-  return designsOf(setId).map((d) => ({
+export const productSlidesFor = (productId: string): Slide[] => {
+  const p = productById(productId);
+  return designsForProduct(productId).map((d) => ({
     image: d.image,
     thumb: d.tiny,
     alt: `صورة حقيقية: ${p ? productTitle(p) : ""}، ${designLabel(d)}، ${d.look}`,
     title: designLabel(d),
-    note: d.look,
+    note: setById(d.setId)?.isNew ? `جديد: ${d.look}` : d.look,
     design: d,
-    shape: set?.shape,
+    shape: setById(d.setId)?.shape,
   }));
 };
 
@@ -178,8 +177,15 @@ export function Viewer() {
               </button>
             ) : null}
             {slide.inset && set ? (
-              <button type="button" className="btn btn-sm btn-ghost" onClick={() => setState({ slides: productSlides(set.id), index: d.n - 1, heading: p ? productTitle(p) : "" })}>
-                كل صور الصنف ({designsOf(set.id).length})
+              <button
+                type="button"
+                className="btn btn-sm btn-ghost"
+                onClick={() => {
+                  const all = productSlidesFor(d.productId);
+                  setState({ slides: all, index: Math.max(0, all.findIndex((x) => x.design.id === d.id)), heading: p ? productTitle(p) : "" });
+                }}
+              >
+                كل صور الصنف ({designsForProduct(d.productId).length})
               </button>
             ) : null}
           </div>

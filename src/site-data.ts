@@ -242,6 +242,8 @@ export type DesignSet = {
   note?: string;
   looks: string[]; // وصف كل تصميم بترتيب صوره
   codes?: (string | undefined)[]; // كود التصميم كما أكده المالك، بنفس ترتيب الصور
+  isNew?: boolean; // صنف وصل حديثاً: يُعلَّم «جديد»
+  prefix?: string; // اسم يُكتب بدل «تصميم» حتى لا يتكرر «تصميم 1» في الصنف نفسه
 };
 export const designSets: DesignSet[] = [
   {
@@ -262,17 +264,27 @@ export const designSets: DesignSet[] = [
       "بني داكن بعروق فاتحة",
       "رمادي داكن بعروق",
       "بني فاتح",
-      "ترافنتينو بيج فاتح",
     ],
   },
   {
     id: "ly120",
     productId: "ly-porcelain-120x60",
-    label: "بورسلين ليبي 120×60",
+    label: "ترافنتينو ليبي 120×60",
     shape: "slab",
+    isNew: true,
     note: "الترافنتينو يُركّب في الحمامات والمطابخ وحيطان الديكور.",
     looks: ["ترافنتينو رمادي"],
     codes: ["273"],
+  },
+  {
+    id: "in120t",
+    productId: "in-porcelain-120x60",
+    label: "ترافنتينو هندي 120×60",
+    shape: "slab",
+    isNew: true,
+    prefix: "ترافنتينو",
+    note: "الترافنتينو يُركّب في الحمامات والمطابخ وحيطان الديكور.",
+    looks: ["ترافنتينو بيج فاتح"],
   },
   {
     id: "p80",
@@ -319,7 +331,18 @@ export const designById = (id: string) => designs.find((d) => d.id === id);
 export const setById = (id: string) => designSets.find((s) => s.id === id);
 export const setForProduct = (productId: string) => designSets.find((s) => s.productId === productId);
 export const designsOf = (setId: string) => designs.filter((d) => d.setId === setId);
-export const designLabel = (d: Design) => d.code ?? `تصميم ${d.n}`;
+// كل تصاميم الصنف من كل مجموعاته، والجديد أولاً.
+export const designsForProduct = (productId: string) => {
+  const list = designs.filter((d) => d.productId === productId);
+  const isNew = (id: string) => (designSets.find((s) => s.id === id)?.isNew ? 0 : 1);
+  return list.slice().sort((a, b) => isNew(a.setId) - isNew(b.setId));
+};
+export const designLabel = (d: Design) => {
+  if (d.code) return d.code;
+  const set = designSets.find((s) => s.id === d.setId);
+  if (set?.prefix) return set.looks.length === 1 ? set.prefix : `${set.prefix} ${d.n}`;
+  return `تصميم ${d.n}`;
+};
 
 // ---------- تصاميم البيوت والحمامات ----------
 // صور توضيحية صُمّمت بالحاسوب: كل صورة تُظهر أحد تصاميمنا الحقيقية بعد التركيب.
