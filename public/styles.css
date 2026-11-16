@@ -3940,3 +3940,113 @@ button.hx:active {
     max-height: 56dvh;
   }
 }
+
+/* ---------- وصل حديثاً ---------- */
+.nw {
+  padding-top: clamp(2.5rem, 5vw, 4rem);
+}
+.nw-box {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  align-items: center;
+  padding: clamp(1.2rem, 3vw, 2.2rem);
+  border-radius: 28px;
+  background: radial-gradient(90% 120% at 100% 0%, var(--navy-2), var(--navy));
+  color: #fff;
+}
+.nw-badge {
+  display: inline-block;
+  padding: 0.2rem 0.9rem;
+  border-radius: 999px;
+  background: var(--glow);
+  color: var(--navy);
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+.nw-head h2 {
+  margin-top: 0.6rem;
+  font-size: clamp(1.9rem, 4vw, 2.8rem);
+}
+.nw-head p {
+  margin-top: 0.5rem;
+  color: rgba(255, 255, 255, 0.82);
+}
+.nw-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.nw-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 0.9rem;
+  padding: 0.75rem;
+  border-radius: 20px;
+  background: #fff;
+  color: var(--ink);
+}
+.nw-pic {
+  aspect-ratio: 10 / 16;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--porcelain);
+  cursor: zoom-in;
+}
+.nw-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--ease);
+}
+.nw-pic:hover img {
+  transform: scale(1.06);
+}
+.nw-text {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.nw-origin {
+  padding: 0.1rem 0.7rem;
+  border-radius: 999px;
+  background: var(--sky);
+  color: var(--blue);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+.nw-text strong {
+  font-family: var(--display);
+  font-size: 1.25rem;
+  line-height: 1.35;
+}
+.nw-text > span:not(.nw-origin) {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+}
+@media (max-width: 900px) {
+  .nw-box {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .nw-card {
+    grid-template-columns: 1fr;
+  }
+  .nw-pic {
+    aspect-ratio: 10 / 12;
+  }
+  .nw-text strong {
+    font-size: 1.05rem;
+  }
+  .nw-text .btn {
+    width: 100%;
+  }
+}

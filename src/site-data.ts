@@ -269,7 +269,7 @@ export const designSets: DesignSet[] = [
   {
     id: "ly120",
     productId: "ly-porcelain-120x60",
-    label: "ترافنتينو ليبي 120×60",
+    label: "ترافنتينو رمادي ليبي",
     shape: "slab",
     isNew: true,
     note: "الترافنتينو يُركّب في الحمامات والمطابخ وحيطان الديكور.",
@@ -279,7 +279,7 @@ export const designSets: DesignSet[] = [
   {
     id: "in120t",
     productId: "in-porcelain-120x60",
-    label: "ترافنتينو هندي 120×60",
+    label: "ترافنتينو بيج هندي",
     shape: "slab",
     isNew: true,
     prefix: "ترافنتينو",

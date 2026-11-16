@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
   designById,
   designLabel,
+  designs,
   designsForProduct,
   isRect,
   originNames,
@@ -241,6 +242,52 @@ export function Designs() {
         <p className="muted small dz-note">
           الصور تصاميم توضيحية أُعدّت بالحاسوب من صور بلاطنا الحقيقية، وقد يختلف اللون قليلاً عن الواقع. العيّنة نفسها تجدها في الفروع.
         </p>
+      </div>
+    </section>
+  );
+}
+
+// وصل حديثاً: البلاطتان الجديدتان جنب بعض، وعلى كل واحدة بلد الصناعة ولونها.
+export function NewArrivals() {
+  const { add, has } = useRequest();
+  const list = designs.filter((d) => setById(d.setId)?.isNew);
+  if (!list.length) return null;
+  return (
+    <section className="nw" id="new" aria-labelledby="nw-title">
+      <div className="wrap">
+        <div className="nw-box" data-reveal>
+          <div className="nw-head">
+            <span className="nw-badge">وصل حديثاً</span>
+            <h2 id="nw-title">ترافنتينو 120×60</h2>
+            <p>يُركّب في الحمامات والمطابخ وحيطان الديكور. صور حقيقية من المعرض.</p>
+          </div>
+          <ul className="nw-list">
+            {list.map((d) => {
+              const p = productById(d.productId);
+              const item = designRequestItem(d);
+              const added = has(item.key);
+              const open = () => {
+                const all = productSlidesFor(d.productId);
+                openViewer(all, Math.max(0, all.findIndex((x) => x.design.id === d.id)), p ? productTitle(p) : "");
+              };
+              return (
+                <li key={d.id} className="nw-card">
+                  <button type="button" className="nw-pic" onClick={open} aria-label={`تكبير: ${d.look}، ${p ? originNames[p.origin] : ""}`}>
+                    <img src={d.thumb} alt="" loading="lazy" />
+                  </button>
+                  <div className="nw-text">
+                    <span className="nw-origin">{p ? originNames[p.origin] : ""}</span>
+                    <strong>{d.look}</strong>
+                    <span>بورسلين 120×60{d.code ? ` · ${designLabel(d)}` : ""}</span>
+                    <button type="button" className={`btn btn-sm ${added ? "btn-done" : "btn-primary"}`} onClick={() => add(item)}>
+                      {added ? <IconCheck /> : <IconPlus />} {added ? "في طلبك" : "أضف لطلبي"}
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       </div>
     </section>
   );
