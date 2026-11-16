@@ -3623,3 +3623,320 @@ button.hx:active {
     display: none;
   }
 }
+
+/* ---------- تصاميم البيوت والحمامات: شبكة بطاقات بزوايا دائرية ---------- */
+.sec-dz {
+  background: linear-gradient(180deg, #ffffff 0%, var(--porcelain) 100%);
+}
+.dz {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: clamp(150px, 15vw, 210px);
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dz-0 {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+.dz-5,
+.dz-6 {
+  grid-column: span 2;
+}
+.dz-cell {
+  min-width: 0;
+}
+.dz-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: var(--navy);
+  color: #fff;
+  text-align: start;
+  cursor: zoom-in;
+  box-shadow: 0 22px 40px -30px rgba(11, 31, 58, 0.6);
+}
+.dz-card > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 70%;
+  transition: transform 0.9s var(--ease);
+}
+.dz-card:hover > img {
+  transform: scale(1.06);
+}
+.dz-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(11, 31, 58, 0.85), rgba(11, 31, 58, 0) 55%);
+  pointer-events: none;
+}
+.dz-kind {
+  position: absolute;
+  z-index: 1;
+  top: 12px;
+  inset-inline-start: 12px;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--blue);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.dz-cap {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 14px;
+  bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  line-height: 1.4;
+}
+.dz-cap > span {
+  display: grid;
+  min-width: 0;
+}
+.dz-cap strong {
+  font-family: var(--display);
+  font-size: 1.05rem;
+}
+.dz-0 .dz-cap strong {
+  font-size: 1.5rem;
+}
+.dz-cap span span {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 0.82rem;
+  color: var(--glow);
+}
+.dz-chip {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 2px #fff;
+}
+.dz-note {
+  margin-top: 1.2rem;
+}
+@media (max-width: 900px) {
+  .dz {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: clamp(140px, 34vw, 220px);
+  }
+  .dz-0 {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+/* صورة حقيقية على بطاقة الصنف */
+.pc-tile.has-photo {
+  background-size: cover;
+  background-position: center;
+}
+.pc-photos {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  inset-inline-start: 12px;
+  padding: 0.2rem 0.75rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--blue);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 18px -10px rgba(11, 31, 58, 0.8);
+  transition: background 0.25s;
+}
+.pc-photos:hover {
+  background: var(--blue-2);
+}
+
+/* ---------- عارض التصاميم والصور الحقيقية ---------- */
+.vw {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 3.5rem 1.2rem 1.2rem;
+  overflow: auto;
+  background: rgba(5, 14, 28, 0.92);
+  animation: fade 0.25s ease;
+}
+.vw-box {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr);
+  width: min(1140px, 100%);
+  border-radius: 24px;
+  overflow: hidden;
+  background: #fff;
+  animation: zoom-in 0.4s var(--ease);
+}
+.vw-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  background: var(--navy);
+  touch-action: pan-y;
+}
+.vw-stage img {
+  max-width: 100%;
+  max-height: min(78dvh, 720px);
+  animation: fade 0.35s ease;
+}
+.vw-stage.is-scene img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+.vw-badge {
+  position: absolute;
+  top: 12px;
+  inset-inline-start: 12px;
+  padding: 0.15rem 0.7rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.vw-stage .icon-btn {
+  position: absolute;
+  top: 50%;
+  margin-top: -22px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--navy);
+}
+.vw-prev {
+  right: 12px;
+}
+.vw-next {
+  left: 12px;
+}
+.vw-side {
+  display: grid;
+  align-content: start;
+  gap: 0.9rem;
+  padding: 1.4rem;
+  min-width: 0;
+}
+.vw-heading {
+  color: var(--blue);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.vw-side h3 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font-size: 1.5rem;
+}
+.vw-side h3 span {
+  color: var(--ink-2);
+  font-size: 0.85rem;
+  font-weight: 500;
+  direction: ltr;
+}
+.vw-note {
+  margin-top: -0.6rem;
+  color: var(--ink-2);
+}
+.vw-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.75rem;
+  border-radius: 16px;
+  background: var(--porcelain);
+}
+.vw-tile img {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.vw-tile div {
+  display: grid;
+  min-width: 0;
+  line-height: 1.5;
+}
+.vw-tile small {
+  color: var(--blue);
+  font-weight: 600;
+}
+.vw-tile strong {
+  font-family: var(--display);
+}
+.vw-tile span {
+  color: var(--ink-2);
+  font-size: 0.88rem;
+}
+.vw-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.vw-thumbs {
+  display: flex;
+  gap: 6px;
+  padding-bottom: 4px;
+  overflow-x: auto;
+}
+.vw-thumbs button {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  background: none;
+  cursor: pointer;
+  opacity: 0.7;
+}
+.vw-thumbs button.is-on {
+  border-color: var(--blue);
+  opacity: 1;
+}
+.vw-thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vw-close {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+@media (max-width: 860px) {
+  .vw {
+    place-items: start center;
+  }
+  .vw-box {
+    grid-template-columns: 1fr;
+  }
+  .vw-stage img {
+    max-height: 56dvh;
+  }
+}
