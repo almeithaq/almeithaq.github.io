@@ -252,19 +252,26 @@ export const designSets: DesignSet[] = [
     label: "بورسلين هندي 120×60",
     shape: "slab",
     looks: [
+      "أونكس بيج ورمادي بعروق شفافة",
+      "أبيض بعروق سوداء",
+      "أبيض بعروق ذهبية وسوداء",
+      "رمادي رخامي بعروق بيضاء",
+      "رمادي فاتح بعروق داكنة مائلة",
+      "رمادي متوسط بعروق بيضاء عريضة",
+      "بيج رمادي فاتح",
+      "بني رمادي داكن بعروق بيضاء",
+      "كريمي بعروق بنية",
       "كريمي بعروق ذهبية",
-      "أبيض بعروق سوداء رفيعة",
       "رمادي فاتح بعروق داكنة",
-      "رمادي رخامي منقّط",
       "بيج فاتح",
       "رمادي متوسط",
       "رمادي فاتح بعروق رفيعة",
       "أبيض بعروق رمادية",
       "رمادي فاتح ناعم",
-      "بني داكن بعروق فاتحة",
       "رمادي داكن بعروق",
       "بني فاتح",
     ],
+    codes: ["1299", undefined, "1406", "237", undefined, undefined, "257", undefined, "228"],
   },
   {
     id: "ly120",
@@ -378,7 +385,7 @@ export type SceneKind = "floor" | "bath";
 export const sceneKinds: Record<SceneKind, string> = { floor: "أرضيات البيت", bath: "الحمامات" };
 export type Scene = { id: string; kind: SceneKind; title: string; designId: string; surface: string };
 export const scenes: Scene[] = [
-  { id: "living", kind: "floor", title: "صالة الجلوس", designId: "p120-01", surface: "الأرضية" },
+  { id: "living", kind: "floor", title: "صالة الجلوس", designId: "p120-10", surface: "الأرضية" },
   { id: "bath1", kind: "bath", title: "حمّام بالأبيض الرخامي", designId: "w30-01", surface: "الحيطان" },
   { id: "majlis", kind: "floor", title: "المجلس", designId: "p120-02", surface: "الأرضية" },
   { id: "bedroom", kind: "floor", title: "غرفة النوم", designId: "p80-01", surface: "الأرضية" },
