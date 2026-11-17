@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Calculator } from "./components/site/calculator";
 import { Catalog } from "./components/site/catalog";
+import { Deck } from "./components/site/deck";
 import { Designs, NewArrivals, Viewer } from "./components/site/designs";
 import { Ideas } from "./components/site/ideas";
 import { setupMagnetic, setupParallax, setupReveal } from "./components/site/fx";
@@ -26,6 +27,7 @@ export function App() {
           <Showroom />
           <Marquee />
           <NewArrivals />
+          <Deck />
           <Designs />
           <Ideas />
           <Catalog />
