@@ -4,6 +4,7 @@ import { Catalog } from "./components/site/catalog";
 import { Deck } from "./components/site/deck";
 import { Designs, NewArrivals, Viewer } from "./components/site/designs";
 import { Ideas } from "./components/site/ideas";
+import { ModernSurface } from "./components/site/modern/ModernSurface";
 import { setupMagnetic, setupParallax, setupReveal } from "./components/site/fx";
 import { RequestDrawer, RequestProvider } from "./components/site/request";
 import { Branches, Contact, Finishes, Footer, Gallery, Header, Marquee, Offers, Sanitary } from "./components/site/sections";
@@ -27,6 +28,7 @@ export function App() {
           <Showroom />
           <Marquee />
           <NewArrivals />
+          <ModernSurface />
           <Deck />
           <Designs />
           <Ideas />
