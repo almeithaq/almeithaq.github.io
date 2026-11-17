@@ -4053,3 +4053,292 @@ button.hx:active {
     width: 100%;
   }
 }
+
+/* أفكار لمساحتك */
+.ib {
+  position: relative;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: #c9ced6;
+}
+.ib i {
+  display: block;
+  background-size: cover;
+  background-position: center;
+}
+.ib .t0 {
+  background-image: var(--ta);
+}
+.ib .t1 {
+  background-image: var(--tb);
+}
+.ib-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 2px;
+  padding: 2px;
+}
+.ib-grid .r1 {
+  transform: rotate(90deg);
+}
+.ib-grid .r2 {
+  transform: rotate(180deg);
+}
+.ib-grid .r3 {
+  transform: rotate(270deg);
+}
+.ib::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.2), transparent 45%, rgba(0, 0, 0, 0.14));
+}
+.ib-room {
+  display: grid;
+  grid-template-rows: 60% 40%;
+  background: #d5d9df;
+}
+.ib-wall {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 2px;
+  padding: 2px 2px 0;
+}
+.ib-floor {
+  position: relative;
+  overflow: hidden;
+  background: #c9ced6;
+}
+.ib-floor::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 10px;
+  background: linear-gradient(rgba(0, 0, 0, 0.32), transparent);
+}
+.ib-plane {
+  position: absolute;
+  inset: 0 -40% auto;
+  height: 240%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 2px;
+  transform-origin: 50% 0;
+  transform: perspective(420px) rotateX(60deg);
+}
+.sec-ip {
+  background: var(--porcelain);
+}
+.ip {
+  display: grid;
+  grid-template-columns: 290px minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+.ip-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.ip-menu button {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.ip-menu button:hover {
+  border-color: var(--glow);
+}
+.ip-menu button.is-on {
+  border-color: var(--blue);
+  background: var(--sky);
+  box-shadow: inset -4px 0 0 var(--blue);
+}
+.ip-menu button:focus-visible,
+.ip-tile:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.ip-chip {
+  display: flex;
+  flex: none;
+}
+.ip-chip img {
+  width: 34px;
+  height: 34px;
+  object-fit: cover;
+  border: 2px solid var(--paper);
+  border-radius: 8px;
+}
+.ip-chip img + img {
+  margin-inline-start: -12px;
+}
+.ip-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.35;
+}
+.ip-name strong {
+  font-size: 0.95rem;
+}
+.ip-name small {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+.ip-stage {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 30px 60px -45px rgba(11, 31, 58, 0.55);
+}
+.ip-board {
+  position: relative;
+  animation: ip-in 0.45s var(--ease);
+}
+.ip-badge {
+  position: absolute;
+  inset-inline-start: 12px;
+  bottom: 12px;
+  z-index: 1;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(11, 31, 58, 0.78);
+  color: #fff;
+  font-size: 0.75rem;
+}
+@keyframes ip-in {
+  from {
+    opacity: 0;
+  }
+}
+.ip-info {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 0.9rem 1.5rem;
+  padding: 1.2rem 1.4rem 1.4rem;
+}
+.ip-text h3 {
+  margin: 0.15rem 0 0.4rem;
+  color: var(--navy);
+  font-family: var(--display);
+  font-size: 1.35rem;
+}
+.ip-text p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.75;
+}
+.ip-text .ip-place {
+  color: var(--blue);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.ip-tiles {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.5rem;
+}
+.ip-tile {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  align-items: center;
+  gap: 0.7rem;
+  width: 100%;
+  padding: 0.45rem;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--porcelain);
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: zoom-in;
+  transition: border-color 0.2s;
+}
+.ip-tile:hover {
+  border-color: var(--blue);
+}
+.ip-tile img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+.ip-tile span {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.35;
+}
+.ip-tile em {
+  color: var(--blue);
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 700;
+}
+.ip-tile strong {
+  color: var(--navy);
+}
+.ip-tile small {
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ip-add {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.ip-note {
+  margin-top: 1rem;
+}
+@media (max-width: 900px) {
+  .ip {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1rem;
+  }
+  .ip-menu {
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 0.4rem;
+    scroll-snap-type: x proximity;
+  }
+  .ip-menu button {
+    flex: none;
+    width: auto;
+    scroll-snap-align: start;
+  }
+  .ip-menu button.is-on {
+    box-shadow: inset 0 -3px 0 var(--blue);
+  }
+  .ip-info {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 1rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ip-board {
+    animation: none;
+  }
+}
