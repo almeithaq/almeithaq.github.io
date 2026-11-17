@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Calculator } from "./components/site/calculator";
 import { Catalog } from "./components/site/catalog";
 import { Designs, NewArrivals, Viewer } from "./components/site/designs";
+import { Ideas } from "./components/site/ideas";
 import { setupMagnetic, setupParallax, setupReveal } from "./components/site/fx";
 import { RequestDrawer, RequestProvider } from "./components/site/request";
 import { Branches, Contact, Finishes, Footer, Gallery, Header, Marquee, Offers, Sanitary } from "./components/site/sections";
@@ -26,6 +27,7 @@ export function App() {
           <Marquee />
           <NewArrivals />
           <Designs />
+          <Ideas />
           <Catalog />
           <Calculator />
           <Finishes />

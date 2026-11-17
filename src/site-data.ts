@@ -387,3 +387,64 @@ export const scenes: Scene[] = [
   { id: "bath3", kind: "bath", title: "حمّام بالرمادي الفاتح", designId: "w30-04", surface: "الحيطان" },
 ];
 export const sceneImage = (s: Scene) => ({ large: `looks/${s.id}.jpg`, medium: `looks/${s.id}-m.jpg`, thumb: `looks/${s.id}-t.jpg` });
+
+// أفكار لمساحتك: تشكيلات تُرسم من صور بلاطنا الحقيقية، وكل فكرة تذكر أكواد البلاط المستخدم.
+export type IdeaLayout = "frame" | "checker" | "path" | "accent" | "room";
+export type Idea = { id: string; title: string; place: string; text: string; layout: IdeaLayout; tiles: [string, string]; roles: [string, string] };
+const byCode = (setId: string, code: string) => designs.find((d) => d.setId === setId && d.code === code)?.id ?? "";
+export const ideas: Idea[] = [
+  {
+    id: "yard-frame",
+    title: "حوش بإطار بني",
+    place: "الحوش والساحات",
+    layout: "frame",
+    text: "وسط الحوش بيج ترافنتينو، وحوله إطار بني معتّق يرسم حدود المساحة ويعطيها شكل سجادة كبيرة.",
+    tiles: [byCode("lk60", "059"), byCode("lk60", "011")],
+    roles: ["الوسط", "الإطار"],
+  },
+  {
+    id: "roof-checker",
+    title: "شطرنج رمادي",
+    place: "السطح أو الحوش",
+    layout: "checker",
+    text: "رمادي فاتح ورمادي داكن بالتبادل. شكل كلاسيكي هادئ يناسب المساحات الواسعة.",
+    tiles: [byCode("lk60", "017"), byCode("lk60", "016")],
+    roles: ["الفاتح", "الداكن"],
+  },
+  {
+    id: "garden-path",
+    title: "ممر في المدخل",
+    place: "المدخل والحديقة",
+    layout: "path",
+    text: "خط فاتح في الوسط يدلّ على الطريق من الباب للبيت، وعلى الجانبين رمادي غرانيتي داكن.",
+    tiles: [byCode("lk60", "008"), byCode("lk60", "028")],
+    roles: ["الممر", "الجوانب"],
+  },
+  {
+    id: "terrazzo-rug",
+    title: "سجادة تيرازو",
+    place: "الحوش أو مدخل البيت",
+    layout: "accent",
+    text: "أرضية بيج سادة، وفي النص مربع تيرازو يلفت النظر مثل سجادة ثابتة.",
+    tiles: [byCode("lk60", "023"), byCode("lk60", "063")],
+    roles: ["الأرضية", "الوسط"],
+  },
+  {
+    id: "travertine-bath",
+    title: "حمّام بترافنتينو",
+    place: "الحمّام",
+    layout: "room",
+    text: "حيطان الحمّام ترافنتينو بيج مطفي بالطول، والأرضية بورسلين أبيض بعروق رمادية ناعمة.",
+    tiles: [byCode("ly120", "284 مطفي"), byCode("ly120m", "289")],
+    roles: ["الحيطان", "الأرضية"],
+  },
+  {
+    id: "living-feature",
+    title: "حائط ديكور في الصالة",
+    place: "الصالة أو المجلس",
+    layout: "room",
+    text: "حائط واحد بترافنتينو رمادي يكون خلفية للتلفزيون أو الكنب، والأرضية بورسلين أبيض بعروق رمادية متشعّبة.",
+    tiles: [byCode("ly120", "273"), byCode("ly120m", "230")],
+    roles: ["الحائط", "الأرضية"],
+  },
+];

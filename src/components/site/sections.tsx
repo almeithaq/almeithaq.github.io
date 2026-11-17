@@ -24,6 +24,7 @@ import { useRequest } from "./request";
 
 const navLinks = [
   { href: "#designs", id: "designs", label: "التصاميم" },
+  { href: "#ideas", id: "ideas", label: "أفكار" },
   { href: "#catalog", id: "catalog", label: "الأصناف" },
   { href: "#calculator", id: "calculator", label: "حاسبة البلاط" },
   { href: "#finishes", id: "finishes", label: "اللمعات" },
