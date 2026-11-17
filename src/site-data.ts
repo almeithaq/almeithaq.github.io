@@ -244,6 +244,7 @@ export type DesignSet = {
   codes?: (string | undefined)[]; // كود التصميم كما أكده المالك، بنفس ترتيب الصور
   isNew?: boolean; // صنف وصل حديثاً: يُعلَّم «جديد»
   prefix?: string; // اسم يُكتب بدل «تصميم» حتى لا يتكرر «تصميم 1» في الصنف نفسه
+  extras?: Record<number, string[]>; // صور إضافية لنفس التصميم: رقم التصميم ← أسماء الملفات
 };
 export const designSets: DesignSet[] = [
   {
@@ -262,9 +263,9 @@ export const designSets: DesignSet[] = [
       "بني رمادي داكن بعروق بيضاء",
       "كريمي بعروق بنية",
       "كريمي بعروق ذهبية",
-      "رمادي فاتح بعروق داكنة",
     ],
-    codes: ["1299", undefined, "1406", "237", undefined, undefined, "257", undefined, "228"],
+    codes: ["1299", undefined, "1406", "237", "4", "241", "257", "336", "228"],
+    extras: { 5: ["p120-05b"] },
   },
   {
     id: "ly120",
@@ -348,11 +349,13 @@ export type Design = {
   image: string; // الصورة الكبيرة
   thumb: string; // صورة البطاقة
   tiny: string; // صورة صغيرة لجدار الواجهة والقوائم
+  more: { image: string; thumb: string; tiny: string }[]; // قطع أخرى من نفس الكود
 };
 export const designs: Design[] = designSets.flatMap((s) =>
   s.looks.map((look, i) => {
     const id = `${s.id}-${String(i + 1).padStart(2, "0")}`;
-    return { id, setId: s.id, productId: s.productId, n: i + 1, look, code: s.codes?.[i], image: `designs/${id}.jpg`, thumb: `designs/${id}-t.jpg`, tiny: `designs/${id}-w.jpg` };
+    return { id, setId: s.id, productId: s.productId, n: i + 1, look, code: s.codes?.[i], image: `designs/${id}.jpg`, thumb: `designs/${id}-t.jpg`, tiny: `designs/${id}-w.jpg`,
+      more: (s.extras?.[i + 1] ?? []).map((f) => ({ image: `designs/${f}.jpg`, thumb: `designs/${f}-t.jpg`, tiny: `designs/${f}-w.jpg` })) };
   }),
 );
 export const designById = (id: string) => designs.find((d) => d.id === id);

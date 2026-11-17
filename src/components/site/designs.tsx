@@ -34,15 +34,20 @@ export type Slide = { image: string; thumb: string; alt: string; title: string; 
 
 export const productSlidesFor = (productId: string): Slide[] => {
   const p = productById(productId);
-  return designsForProduct(productId).map((d) => ({
-    image: d.image,
-    thumb: d.tiny,
-    alt: `صورة حقيقية: ${p ? productTitle(p) : ""}، ${designLabel(d)}، ${d.look}`,
-    title: designLabel(d),
-    note: setById(d.setId)?.isNew ? `جديد: ${d.look}` : d.look,
-    design: d,
-    shape: setById(d.setId)?.shape,
-  }));
+  return designsForProduct(productId).flatMap((d) => {
+    const main: Slide = {
+      image: d.image,
+      thumb: d.tiny,
+      alt: `صورة حقيقية: ${p ? productTitle(p) : ""}، ${designLabel(d)}، ${d.look}`,
+      title: designLabel(d),
+      note: setById(d.setId)?.isNew ? `جديد: ${d.look}` : d.look,
+      design: d,
+      shape: setById(d.setId)?.shape,
+    };
+    // قطع أخرى من نفس الكود تظهر بعد صورتها الأولى.
+    const more: Slide[] = d.more.map((m) => ({ ...main, image: m.image, thumb: m.tiny, alt: `${main.alt}، قطعة ثانية`, note: `${d.look} (قطعة ثانية من نفس الكود)` }));
+    return [main, ...more];
+  });
 };
 
 const sceneSlides: Slide[] = scenes.flatMap((s) => {
@@ -186,7 +191,7 @@ export function Viewer() {
                   setState({ slides: all, index: Math.max(0, all.findIndex((x) => x.design.id === d.id)), heading: p ? productTitle(p) : "" });
                 }}
               >
-                كل صور الصنف ({designsForProduct(d.productId).length})
+                كل صور الصنف ({productSlidesFor(d.productId).length})
               </button>
             ) : null}
           </div>

@@ -254,6 +254,7 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
   const stageRef = useRef<HTMLDivElement>(null);
   const added = has(p.id);
   const photos = designsForProduct(p.id);
+  const photoWord = (n: number) => (n === 1 ? "صورة حقيقية" : n === 2 ? "صورتان حقيقيتان" : n <= 10 ? `${n} صور حقيقية` : `${n} صورة حقيقية`);
   // صورة حقيقية على البلاطة المرسومة، ولكل تصميم ديكور ضمن الصورة نفسها.
   const photo = photos[0]?.thumb;
   const tiles = p.decor && !photo ? 2 : 1;
@@ -302,7 +303,7 @@ function ProductCard({ product: p, cardRef }: { product: Product; cardRef: (el: 
         )}
         {photos.length ? (
           <button type="button" className="pc-photos" onClick={showPhotos}>
-            {photos.length === 1 ? "صورة حقيقية" : photos.length === 2 ? "صورتان حقيقيتان" : photos.length <= 10 ? `${photos.length} صور حقيقية` : `${photos.length} صورة حقيقية`}
+            {photoWord(photos.reduce((n, d) => n + 1 + d.more.length, 0))}
           </button>
         ) : null}
         <span className="pc-dim">{p.shape === "hex" ? (p.size ?? "شكل سداسي") : p.size}</span>
