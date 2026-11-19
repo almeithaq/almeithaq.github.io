@@ -5742,3 +5742,17 @@ button.hx:active {
     height: 24px;
   }
 }
+
+/* الشريط العلوي لاصق بأعلى الصفحة (sticky) بدل fixed: Safari على الآيفون كان أحياناً يخلّيه في نص الشاشة.
+   ارتفاعه يُلغى بهامش سالب بنفس قيمته، فيبقى فوق صورة الواجهة كما كان ولا يتحرك المحتوى عند تصغيره. */
+.hd {
+  position: sticky;
+  inset: auto;
+  top: 0;
+  height: 78px;
+  margin-bottom: -78px;
+}
+.hd.is-scrolled {
+  height: 64px;
+  margin-bottom: -64px;
+}
